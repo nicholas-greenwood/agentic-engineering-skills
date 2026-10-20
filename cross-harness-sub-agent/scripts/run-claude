@@ -1,0 +1,164 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+usage() {
+  echo "usage: run-claude --mode read-only|write --workspace <path> --prompt-file <path> (--session-id <uuid> | --resume <uuid>) [--model <model>] [--effort <effort>] [--output <path>]" >&2
+}
+
+require_value() {
+  if [[ $# -lt 2 || -z "${2:-}" ]]; then
+    usage
+    exit 2
+  fi
+}
+
+mode=""
+workspace=""
+prompt_file=""
+session_id=""
+resume_id=""
+model="claude-opus-5-5"
+effort="high"
+report_file=""
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --mode)
+      require_value "$@"
+      mode="${2:-}"
+      shift 2
+      ;;
+    --workspace)
+      require_value "$@"
+      workspace="${2:-}"
+      shift 2
+      ;;
+    --prompt-file)
+      require_value "$@"
+      prompt_file="${2:-}"
+      shift 2
+      ;;
+    --session-id)
+      require_value "$@"
+      session_id="${2:-}"
+      shift 2
+      ;;
+    --resume)
+      require_value "$@"
+      resume_id="${2:-}"
+      shift 2
+      ;;
+    --model)
+      require_value "$@"
+      model="${2:-}"
+      shift 2
+      ;;
+    --effort)
+      require_value "$@"
+      effort="${2:-}"
+      shift 2
+      ;;
+    --output)
+      require_value "$@"
+      report_file="${2:-}"
+      shift 2
+      ;;
+    --help|-h)
+      usage
+      exit 0
+      ;;
+    *)
+      usage
+      exit 2
+      ;;
+  esac
+done
+
+if [[ "$mode" != "read-only" && "$mode" != "write" ]]; then
+  usage
+  exit 2
+fi
+
+if [[ -z "$workspace" || ! -d "$workspace" ]]; then
+  echo "workspace must be an existing directory" >&2
+  exit 2
+fi
+
+workspace="$(cd "$workspace" && pwd -P)"
+
+if [[ -z "$prompt_file" || ! -f "$prompt_file" ]]; then
+  echo "--prompt-file must name an existing file" >&2
+  exit 2
+fi
+prompt_file="$(cd "$(dirname "$prompt_file")" && pwd -P)/$(basename "$prompt_file")"
+
+if [[ ! -s "$prompt_file" ]]; then
+  echo "--prompt-file must not be empty" >&2
+  exit 2
+fi
+
+if [[ -z "$session_id" && -z "$resume_id" ]] || [[ -n "$session_id" && -n "$resume_id" ]]; then
+  echo "exactly one of --session-id or --resume is required" >&2
+  exit 2
+fi
+
+workspace_key="$(printf '%s' "$workspace" | shasum -a 256 | cut -c1-16)"
+user_tmp="$(getconf DARWIN_USER_TEMP_DIR)"
+neutral_dir="${user_tmp%/}/cross-harness-claude/$workspace_key"
+mkdir -p "$neutral_dir"
+
+if [[ "$mode" == "read-only" ]]; then
+  edit_instruction="do not modify files"
+else
+  edit_instruction="file edits are allowed"
+fi
+
+claude_args=(
+  --add-dir "$workspace"
+  --permission-mode auto
+  --model "$model"
+  --effort "$effort"
+  --output-format text
+  --append-system-prompt "the repository workspace is $workspace. treat it as the project root. $edit_instruction. start every Bash command by changing to this directory in the same command. obey the repository instructions found there."
+)
+
+if [[ -n "$session_id" ]]; then
+  claude_args+=(--session-id "$session_id")
+else
+  claude_args+=(--resume "$resume_id")
+fi
+
+output_file="$neutral_dir/${session_id:-$resume_id}.out"
+
+set +e
+(cd "$neutral_dir" && env TMPDIR="$user_tmp" CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1 claude -p "${claude_args[@]}" < "$prompt_file") | tee "$output_file"
+
+pipeline_status=("${PIPESTATUS[@]}")
+set -e
+if [[ "${pipeline_status[0]}" -ne 0 ]]; then
+  exit "${pipeline_status[0]}"
+fi
+if [[ "${pipeline_status[1]}" -ne 0 ]]; then
+  exit "${pipeline_status[1]}"
+fi
+
+if [[ -n "$report_file" ]]; then
+  if [[ ! -s "$output_file" ]]; then
+    echo "cannot publish empty report: $report_file (mirror: $output_file)" >&2
+    exit 1
+  fi
+  if [[ -d "$report_file" ]]; then
+    echo "cannot publish report to a directory: $report_file" >&2
+    exit 1
+  fi
+  report_tmp="$(mktemp "${report_file}.tmp.XXXXXX")" || {
+    echo "cannot publish report: $report_file (mirror: $output_file)" >&2
+    exit 1
+  }
+  trap 'rm -f "$report_tmp"' EXIT
+  cp "$output_file" "$report_tmp"
+  mv -f "$report_tmp" "$report_file"
+fi
+
+rm -f "$prompt_file"

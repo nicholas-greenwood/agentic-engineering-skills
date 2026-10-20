@@ -1,0 +1,5 @@
+interface:
+  display_name: "Claude Sub-Agents"
+  short_description: "Run parallel Claude Code writers as sub-agents in their own worktrees"
+policy:
+  allow_implicit_invocation: false
