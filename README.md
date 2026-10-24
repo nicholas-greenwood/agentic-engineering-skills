@@ -21,4 +21,6 @@ skills i install with [skills.sh](https://www.skills.sh) and use without much ed
   - supporting skills: [grilling](https://www.skills.sh/mattpocock/skills/grilling), [codebase-design](https://www.skills.sh/mattpocock/skills/codebase-design), [domain-modeling](https://www.skills.sh/mattpocock/skills/domain-modeling), [tdd](https://www.skills.sh/mattpocock/skills/tdd), [writing-for-agents](https://www.skills.sh/mattpocock/skills/writing-for-agents), [diagnosing-bugs](https://www.skills.sh/mattpocock/skills/diagnosing-bugs)
 - other skills: [agent-browser](https://www.skills.sh/vercel-labs/agent-browser/agent-browser), [github-image-upload](https://www.skills.sh/drogers0/gh-image/github-image-upload), [thermo-nuclear-code-quality-review](https://www.skills.sh/cursor/plugins/thermo-nuclear-code-quality-review), [ponytail](https://www.skills.sh/dietrichgebert/ponytail/ponytail)
 
-> my beginner-friendly [ai-driven engineering guide](https://app.notion.com/p/nicholas8/ai-assisted-engineering-guide-3bf10d5dbf7c80bf9006e4549a71d747)
+---
+
+more in my beginner-friendly [ai-driven engineering guide](https://app.notion.com/p/nicholas8/ai-assisted-engineering-guide-3bf10d5dbf7c80bf9006e4549a71d747)
