@@ -7,6 +7,7 @@ some of the more reusable agent skills from my engineering setup that are not ti
 | `cross-harness-sub-agent` | hand tasks between codex and claude code |
 | `plan` | nice plans |
 | `pr` | nice pr descriptions |
+| `record-video` | record browser workflows for pr demos, bug repros and walkthroughs, with captions and highlights |
 | `ai-code-review-catalog` | pretty self-explanatory |
 | `triaging-feedback` | which ai code review comments are worth adressing |
 | `claude-sub-agents` | parallel claude code workers, 1 worktree each |
