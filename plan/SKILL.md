@@ -1,15 +1,15 @@
 ---
 name: plan
-description: use when user asks to write a plan or says "md plan"/"linear plan"
+description: use when user asks to write a plan or says "chat plan"/"md plan"/"linear plan"
 ---
 
 <instructions>
 
 plan location:
 
-- user asks for a linear plan -> create it as a linear issue
+- user asks for a chat plan -> output the plan in chat
 - user asks for a md plan -> put the plan in the `plans/` directory
-- otherwise -> output the plan in chat
+- otherwise -> create the plan as a linear issue
 
 before writing:
 
@@ -58,12 +58,13 @@ PRs:
 - wide refactors are the exception to tracer bullets: 1 mechanical change whose blast radius fans across the codebase (rename a column, retype a shared symbol) can't land green as 1 slice. sequence it as expand-contract: expand (add the new form beside the old), migrate call sites in batches sized by blast radius (each batch its own PR blocked by the expand), contract (delete the old form once no caller remains, blocked by every batch)
 - edge cases: only traps a competent implementer could plausibly miss; "none beyond existing behaviour" is valid only for mechanical changes
 
-"linear plan":
+linear plans (default):
 
-- 1 standalone backlog issue carries the whole plan, even when it has multiple PRs
+- 1 backlog issue carries the whole plan, even when it has multiple PRs
 - use [linear-project-map](../linear-project-map/SKILL.md) to select and verify exactly 1 project and any applicable request and group-company labels before creating the issue
 - create the issue with only these fields: `team` (the workspace team), `title` = the plan title, `description` = the plan with the `# [title]` heading removed, `state: "Backlog"`, `assignee` = the current user, `project` = the selected project id, `labels` = the applicable verified labels when present
-- standalone means exactly those fields: no cycle, parent, or issue relations
+- if a user provided a relevant issue, add `relatedTo` = the user-provided issues, and their sub-issues, that the plan delivers any part of. don't search linear for related issues
+- no cycle or parent
 - after creating the issue, append its id to every PR title in it. example: "feat: add red button (ARI-123)"
 
 "md plan":
