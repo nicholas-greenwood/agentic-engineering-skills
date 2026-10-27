@@ -5,6 +5,7 @@ this is a public snapshot of a working engineering setup. share the skills and w
 ## maintaining skills
 
 - `.skill-source-repository` contains the path or url of the repository to copy skills from; use it unless the user asks for a different repository
+- when updating skills, inspect both repositories' git histories to see what edits have been made to the skill from the source repository, if any
 - keep complete skill folders at the repository root, including supporting scripts, prompts and configuration
 - copy source skills unchanged unless edits are needed for confidentiality or explicitly requested
 - project-specific commands, conventions and references to skills not included here are intentional. keep them rather than turning the collection into a self-contained framework
