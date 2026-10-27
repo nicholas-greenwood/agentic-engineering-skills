@@ -23,4 +23,4 @@ complete when every worker runs in its own worktree
 
 ## follow-up
 
-`SendMessage` is denied in `.claude/settings.json`, so a finished worker cannot be resumed. send a follow-up to a new worker in the same worktree with the previous result and the new request
+resume a finished worker with `SendMessage` to its agent ID; it keeps its transcript, so send only the new request and have it re-confirm its worktree and branch per step 5. when resuming would hurt, send a new worker in the same worktree the previous result and the new request
