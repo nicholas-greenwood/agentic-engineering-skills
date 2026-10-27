@@ -2,17 +2,17 @@ some of the more reusable agent skills from my engineering setup that are not ti
 
 | skill | what it is |
 | --- | --- |
-| `loop` | the core. hand an agent a task and get back a merge-ready pr. workers implement, independent agents review and validate through the real ui or api, and the orchestrator handles feedback, ci and evidence |
-| `orchestrate-multi-pr-work` | 1 `loop` per pr across a multi-pr plan. handles stacked and parallel prs |
-| `cross-harness-sub-agent` | hand tasks between codex and claude code |
-| `plan` | nice plans |
-| `pr` | nice pr descriptions |
-| `record-video` | record browser videos for pr descriptions, bug repros and walkthroughs. with captions and highlights |
-| `propose-refactor` | review an area from 4 angles and rank the refactors worth doing |
-| `llm-evaluation` | evaluate models, prompts and workflows with frozen inputs and saved evidence |
-| `ai-code-review-catalog` | pretty self-explanatory |
-| `triaging-feedback` | which code review comments are worth adressing |
-| `claude-sub-agents` | parallel claude code workers, 1 worktree each |
+| [`loop`](loop/SKILL.md) | the core. hand an agent a task and get back a merge-ready pr. workers implement, independent agents review and validate through the real ui or api, and the orchestrator handles feedback, ci and evidence |
+| [`orchestrate-multi-pr-work`](orchestrate-multi-pr-work/SKILL.md) | 1 `loop` per pr across a multi-pr plan. handles stacked and parallel prs |
+| [`cross-harness-sub-agent`](cross-harness-sub-agent/SKILL.md) | hand tasks between codex and claude code |
+| [`plan`](plan/SKILL.md) | nice plans |
+| [`pr`](pr/SKILL.md) | nice pr descriptions |
+| [`record-video`](record-video/SKILL.md) | record browser videos for pr descriptions, bug repros and walkthroughs. with captions and highlights |
+| [`propose-refactor`](propose-refactor/SKILL.md) | review an area from 4 angles and rank the refactors worth doing |
+| [`llm-evaluation`](llm-evaluation/SKILL.md) | evaluate models, prompts and workflows with frozen inputs and saved evidence |
+| [`ai-code-review-catalog`](ai-code-review-catalog/SKILL.md) | pretty self-explanatory |
+| [`triaging-feedback`](triaging-feedback/SKILL.md) | which code review comments are worth adressing |
+| [`claude-sub-agents`](claude-sub-agents/SKILL.md) | parallel claude code workers, 1 worktree each |
 
 some referenced commands and skills belong to the original repository and aren't included here
 
