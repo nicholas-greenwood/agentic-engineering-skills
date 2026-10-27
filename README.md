@@ -9,6 +9,7 @@ some of the more reusable agent skills from my engineering setup that are not ti
 | `pr` | nice pr descriptions |
 | `record-video` | record browser videos for pr descriptions, bug repros and walkthroughs. with captions and highlights |
 | `propose-refactor` | review an area from 4 angles and rank the refactors worth doing |
+| `llm-evaluation` | evaluate models, prompts and workflows with frozen inputs and saved evidence |
 | `ai-code-review-catalog` | pretty self-explanatory |
 | `triaging-feedback` | which code review comments are worth adressing |
 | `claude-sub-agents` | parallel claude code workers, 1 worktree each |
