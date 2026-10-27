@@ -5,8 +5,8 @@ some of the more reusable agent skills from my engineering setup that are not ti
 | [`loop`](loop/SKILL.md) | the core. hand an agent a task and get back a merge-ready pr. workers implement, independent agents review and validate through the real ui or api, and the orchestrator handles feedback, ci and evidence |
 | [`orchestrate-multi-pr-work`](orchestrate-multi-pr-work/SKILL.md) | 1 `loop` per pr across a multi-pr plan. handles stacked and parallel prs |
 | [`cross-harness-sub-agent`](cross-harness-sub-agent/SKILL.md) | hand tasks between codex and claude code |
-| [`plan`](plan/SKILL.md) | nice plans |
-| [`pr`](pr/SKILL.md) | nice pr descriptions |
+| [`plan`](plan/SKILL.md) | turn a task into a plan with vertical prs and dependency graph |
+| [`pr`](pr/SKILL.md) | short pr descriptions that explain the change, merge risks and verification evidence |
 | [`record-video`](record-video/SKILL.md) | record browser videos for pr descriptions, bug repros and walkthroughs. with captions and highlights |
 | [`propose-refactor`](propose-refactor/SKILL.md) | review an area from 4 angles and rank the refactors worth doing |
 | [`llm-evaluation`](llm-evaluation/SKILL.md) | evaluate models, prompts and workflows with frozen inputs and saved evidence |
