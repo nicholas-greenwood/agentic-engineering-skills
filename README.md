@@ -6,6 +6,7 @@ some of the more reusable agent skills from my engineering setup that are not ti
 | `orchestrate-multi-pr-work` | 1 `loop` per pr across a multi-pr plan. handles stacked and parallel prs |
 | `cross-harness-sub-agent` | hand tasks between codex and claude code |
 | `plan` | nice plans |
+| `propose-refactor` | review an area from 4 angles and rank the refactors worth doing |
 | `pr` | nice pr descriptions |
 | `record-video` | record browser workflows for pr demos, bug repros and walkthroughs, with captions and highlights |
 | `ai-code-review-catalog` | pretty self-explanatory |
