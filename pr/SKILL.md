@@ -114,9 +114,14 @@ JS
 
 ### visual verification
 
-- for UI changes, or when screenshots/videos help review, capture them with `/agent-browser` and upload them using `/github-image-upload`; include them in the description or a new comment
-- compare the base and changed versions in the same state, with matching viewport, data, and crop
-- use 1 2-column before/after table per pair, as above; other visuals can use other formats
+- for all user-visible changes, or when visuals help review:
+  - include browser evidence from our app or other sites, dashboards and prototypes when it helps explain or verify the change
+  - use `/agent-browser` for screenshots of useful static states
+  - use `/record-video` when full flow, motion, interaction or state persistence needs demonstrating
+  - inspect screenshots, videos and visible URLs for private data before uploading; redact without hiding behaviour needed as proof
+  - upload using `/github-image-upload` and include the result in the description
+- for before/after comparisons, capture the base and changed versions in the same state, with matching viewport, data, and crop
+- for before/after comparisons, use 1 2-column table per pair, as above; other visuals can use other formats
 - when an element appears after an animation, wait for it to finish, ie add a 1s delay before capture
 - if a before capture is unavailable, label the available visual accurately and explain the gap briefly
 - skip this section when there are no visuals
@@ -130,6 +135,6 @@ why and what changed:
 - try the [demo file](https://github.com/meridian-labs/ops-console/pull/33042/changes#diff-b09335cb9e6aceea717e1b0e194589238d6c7af4973b68d9613b627ce07f928d) or [line 9](https://github.com/meridian-labs/ops-console/pull/33042/changes#diff-b09335cb9e6aceea717e1b0e194589238d6c7af4973b68d9613b627ce07f928dR9)
 
 merge danger:
-- door: 2-way, restore the previous link instructions
+- door: 2-way, revert
 - blast radius: PR descriptions and reviewer navigation
 ```
