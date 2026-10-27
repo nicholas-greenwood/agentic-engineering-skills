@@ -14,7 +14,8 @@ this is a public snapshot of a working engineering setup. share the skills and w
 ## readme
 
 - keep it short and list every included skill in the table
-- when adding a skill, suggest 5 versions of its readme entry and apply the best one
+- when adding a skill, write 5 distinct versions of its readme entry and apply the best one
+- show all 5 versions as a numbered list in the final response and clearly identify which version was applied
 - when updating a skill, suggest readme edits if needed
 - link upstream skills without descriptions
 - retain the caveat about references to commands and skills not included here
