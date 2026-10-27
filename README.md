@@ -1,18 +1,56 @@
 some of the more reusable agent skills from my engineering setup that are not tightly coupled with the repository
 
-| skill | what it is |
-| --- | --- |
-| [`loop`](loop/SKILL.md) | the core. hand an agent a task and get back a merge-ready pr. workers implement, independent agents review and validate through the real ui or api, and the orchestrator handles feedback, ci and evidence |
-| [`orchestrate-multi-pr-work`](orchestrate-multi-pr-work/SKILL.md) | 1 `loop` per pr across a multi-pr plan. handles stacked and parallel prs |
-| [`cross-harness-sub-agent`](cross-harness-sub-agent/SKILL.md) | hand tasks between codex and claude code |
-| [`plan`](plan/SKILL.md) | turn a task into a plan with vertical prs and dependency graph |
-| [`pr`](pr/SKILL.md) | short pr descriptions that explain the change, merge risks and verification evidence |
-| [`record-video`](record-video/SKILL.md) | record browser videos for pr descriptions, bug repros and walkthroughs. with captions and highlights |
-| [`propose-refactor`](propose-refactor/SKILL.md) | review an area from 4 angles and rank the refactors worth doing |
-| [`llm-evaluation`](llm-evaluation/SKILL.md) | evaluate models, prompts and workflows with frozen inputs and saved evidence |
-| [`ai-code-review-catalog`](ai-code-review-catalog/SKILL.md) | pretty self-explanatory |
-| [`triaging-feedback`](triaging-feedback/SKILL.md) | which code review comments are worth adressing |
-| [`claude-sub-agents`](claude-sub-agents/SKILL.md) | parallel claude code workers, 1 worktree each |
+<table>
+  <thead>
+    <tr><th width="260">skill</th><th>what it is</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="loop/SKILL.md"><code>loop</code></a></td>
+      <td>the core. hand an agent a task and get back a merge-ready pr. workers implement, independent agents review and validate through the real ui or api, and the orchestrator handles feedback, ci and evidence</td>
+    </tr>
+    <tr>
+      <td><a href="orchestrate-multi-pr-work/SKILL.md"><code>orchestrate-multi-pr-work</code></a></td>
+      <td>1 <code>loop</code> per pr across a multi-pr plan. handles stacked and parallel prs</td>
+    </tr>
+    <tr>
+      <td><a href="cross-harness-sub-agent/SKILL.md"><code>cross-harness-sub-agent</code></a></td>
+      <td>hand tasks between codex and claude code</td>
+    </tr>
+    <tr>
+      <td><a href="plan/SKILL.md"><code>plan</code></a></td>
+      <td>turn a task into a plan with vertical prs and dependency graph</td>
+    </tr>
+    <tr>
+      <td><a href="pr/SKILL.md"><code>pr</code></a></td>
+      <td>short pr descriptions that explain the change, merge risks and verification evidence</td>
+    </tr>
+    <tr>
+      <td><a href="record-video/SKILL.md"><code>record-video</code></a></td>
+      <td>record browser videos for pr descriptions, bug repros and walkthroughs. with captions and highlights</td>
+    </tr>
+    <tr>
+      <td><a href="propose-refactor/SKILL.md"><code>propose-refactor</code></a></td>
+      <td>review an area from 4 angles and rank the refactors worth doing</td>
+    </tr>
+    <tr>
+      <td><a href="llm-evaluation/SKILL.md"><code>llm-evaluation</code></a></td>
+      <td>evaluate models, prompts and workflows with frozen inputs and saved evidence</td>
+    </tr>
+    <tr>
+      <td><a href="ai-code-review-catalog/SKILL.md"><code>ai-code-review-catalog</code></a></td>
+      <td>pretty self-explanatory</td>
+    </tr>
+    <tr>
+      <td><a href="triaging-feedback/SKILL.md"><code>triaging-feedback</code></a></td>
+      <td>which code review comments are worth adressing</td>
+    </tr>
+    <tr>
+      <td><a href="claude-sub-agents/SKILL.md"><code>claude-sub-agents</code></a></td>
+      <td>parallel claude code workers, 1 worktree each</td>
+    </tr>
+  </tbody>
+</table>
 
 some referenced commands and skills belong to the original repository and aren't included here
 
