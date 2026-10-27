@@ -3,11 +3,12 @@ name: loop
 description: use only when the user or another skill tags it
 ---
 
-you are the orchestrator: you do the work yourself and spawn sub-agents only for review and validation
+you are the orchestrator: you own the loop docs, `validation-state.json`, triage, git pushes, the PR and its gates. a worker sub-agent makes the code changes per `<worker-task>`, unless `<editing>` lets you make them in a tiny loop; other sub-agents review, validate and help per `<helpers>`
 
 <what-to-do>
 
 1. write the loop docs:
+   - `request.md`: an exact copy of the user's request, plus every later message that set scope before step 2, including answers to the check below. run `chmod a-w` on it at the end of step 1 and never edit it again
    - `contract.md` with sections:
      - goals: specific and verifiable
      - non-goals: what's out of scope
@@ -19,7 +20,8 @@ you are the orchestrator: you do the work yourself and spawn sub-agents only for
      - hard boundaries: loop-specific never-violate rules on top of AGENTS.md (data, infra, external systems)
      - environment notes: facts verified live in this environment (exact commands, quirks, timings) so sub-agents don't rediscover them
      - stop conditions
-   - `validation.md`: 1-20 assertions with stable ids (`VAL-01`, ...)
+     - editing: `inline` or `worker` per `<editing>`
+   - `validation.md`: 1-20 testable behavioural assertions that define completion and correctness, each a `## VAL-01 <title>` heading with a stable id
      - each is manual and side-effect-free: a headless `agent-browser` flow, a curl call against a local endpoint, a read-only data check (local/prod)
      - never "tests or static code checks pass" - CI already covers that
      - each assertion states surface, exact steps, pass criteria, and required evidence (screenshots mandatory for UI flows)
@@ -28,18 +30,16 @@ you are the orchestrator: you do the work yourself and spawn sub-agents only for
    - init `validation-state.json` per `<validation-state>`
    - run `mkdir -p "playground/loops/<loop-name>"/{handoffs,evidence}`
    - size the docs to the change: a small loop may be a few-line contract with sections marked "n/a" and 1 assertion; a 500 loc loop earns the full template
-2. complete the task against that contract
-   - test it adversarially: if needed, add data to local DB, use smoke tests, use browser, etc.
-   - make sure it will work in prod against prod DB; don't edit prod data
-   - done when every contract goal is implemented and every assertion is either self-marked passed with evidence (trivially cheap ones only) or left failed for the validator
+   - check the contract against `request.md`. if it settles a choice the request leaves open and a wrong guess would be expensive to undo (product behaviour, scope, data, a 1-way door), ask the user about only those choices, each with a recommended answer, and wait; otherwise continue without asking. add the answers to `request.md` and the contract
+   - done when `<loop-check> docs` passes
+2. complete the task against that contract per `<editing>`, with every contract goal as the items; the report goes to `handoffs/r0-worker.md`
+   - done when you have verified the report, `<loop-check> editing` passes, every contract goal is implemented and every assertion is either marked passed from the worker's evidence (trivially cheap ones only) or left failed for the validator
 3. open a PR with the `/pr` skill
-4. pin round `<n>` to the pushed commit: on a clean worktree run `git rev-parse --verify 'HEAD^{commit}' > playground/loops/<loop-name>/round-head`, then leave the worktree untouched until step 7. run reviewers and the validator in parallel (reports go to `handoffs/r<n>-*`):
+4. pin round `<n>` to the pushed commit: on a clean worktree run `git rev-parse --verify 'HEAD^{commit}' > playground/loops/<loop-name>/round-head`, check `<loop-check> round-start` passes, then leave the worktree untouched until step 7. run reviewers and the validator in parallel (reports go to `handoffs/r<n>-*`):
    - independent review agents with clear chat history: default 1; up to 4 for high-risk changes
      - go with the first different entries from the `/ai-code-review-catalog` skill under `<reviewers>`
      - full review in rounds 1, 2, 3, 6, then every multiple of 5 from 10, or after a contract/core-design or base change; diff-only review otherwise
-     - append `<reviewer-prompt-suffix>` to every reviewer prompt, substituting `<review-mode-instructions>` with only the selected instruction:
-       - full: `ROUND_SHA="$(cat playground/loops/<loop-name>/round-head)"; inspect git diff "$(git merge-base "$ROUND_SHA" origin/<base>)" "$ROUND_SHA"`
-       - diff-only: `ROUND_SHA="$(cat playground/loops/<loop-name>/round-head)"; inspect git diff "$(cat playground/loops/<loop-name>/last-reviewed-head)" "$ROUND_SHA"; use surrounding code only as context and report only issues introduced by this diff`
+     - end every reviewer prompt with `<dispatch>` for `prompts/reviewer.md`, adding its `<slug>` and the mode, `full` or `diff-only`
      - read-only reviewers return their report as the final response. pass the handoff path to the claude launcher with `--output`, or use a fresh attempt path outside `handoffs/` with codex `--output-last-message`; accept only a non-empty report from a confirmed successful current attempt, then copy the accepted codex attempt to the handoff path. persist native sub-agent final responses to the handoff path yourself. failed or partial output is diagnostic evidence, never a completed review
    - run 1 codex native review agent with the matching mode through `bin/codex-native-review`; local reviewers still carry contract and skip coverage
      - record available verification in `evidence/r<n>-verification.md`: exact commit, commands or CI links, scope and pass/fail/pending status. pending checks may stay pending while review runs
@@ -57,45 +57,108 @@ you are the orchestrator: you do the work yourself and spawn sub-agents only for
          playground/loops/<loop-name>/evidence/r<n>-verification.md
        ```
      - retain the helper's report path for triage and its log for launcher/provider failures
-   - run 1 worker sub-agent as validator, tasked per `<validator-task>`
-   - substitute `<loop-name>`, `<n>` and `<base>` (the PR's current base branch) in the templates before sending
-5. collect every step 4 report before triage; until every reviewer and validator has finished, only wait and record feedback every 30s
-   - then run `cp playground/loops/<loop-name>/{round-head,last-reviewed-head}`
+     - if the launcher fails twice on quota, auth or infra, write the reason and log path to `handoffs/r<n>-codex-native/waiver.md` and continue; the other reviewers still run
+   - run 1 sub-agent as validator through `<dispatch>` for `prompts/validator.md`
+5. collect every step 4 report before triage
+   - until every reviewer and validator has finished, only wait and persist each report as it lands
+   - wait on each task's completion notification, or poll it every 30s where it has none
+   - once `<loop-check> reports` passes, run `cp playground/loops/<loop-name>/{round-head,last-reviewed-head}`
 6. run `bin/ai-review-status --wait <pr-number>`, then `gh pr checks <pr-number> --watch > /dev/null; gh pr checks <pr-number>` so the check table prints once
    - proceed to triage when `bin/ai-review-status` exits 0 and the checks have finished; check failures go to triage
    - if you see signs of AI review quota exhaustion, auth, config, or infra failure, save it under `evidence/`, skip only the github AI review gate and proceed to triage, retain all existing review feedback
-   - use the `/triaging-feedback` skill to triage from 2 sources: the `handoffs/` files and unresolved PR comments (run `bin/unresolved-pr-comments <pr-number>`). skip comments that go beyond the `contract.md` scope. factor in the price of a new loop round; sometimes good enough beats perfect
+   - use the `/triaging-feedback` skill to triage from 2 sources: the `handoffs/` files and unresolved PR comments (run `bin/unresolved-pr-comments <pr-number>`). filter findings through the contract to prevent looping, disobeying the user and out-of-scope work: skip comments that go beyond the `contract.md` scope. factor in the price of a new loop round; sometimes good enough beats perfect
    - deduplicate skips by proposed change, append new sources to existing entries, and remove entries made obsolete by design changes
    - use the command from the `/fix-ci-failures` skill to fetch CI failures
    - update `validation-state.json` from the validator report
    - apply useful `validation_updates` from the validator report to `validation.md`
    - record skipped comments in `skipped-review-comments.md`
    - write `handoffs/r<n>-triage.md` per `<triage-report>`
-   - done when every handoff finding, validator failure, PR comment and CI failure is in `r<n>-triage.md` as queued, skipped or a waiver
-7. adress feedback that passed triaging and failed validations. address CI failures. commit, push
-   - turn `## queued` in `handoffs/r<n>-triage.md` into `## fixed <sha>`, 1 heading per commit
+   - done when every handoff finding, validator failure, PR comment and CI failure is in `r<n>-triage.md` as queued, skipped or a waiver, and `<loop-check> triage` passes
+7. per `<editing>`, address feedback that passed triaging, failed validations and CI failures, with `## queued` from `handoffs/r<n>-triage.md` as the items; the report goes to `handoffs/r<n>-worker.md`. verify the report, then push
+   - turn `## queued` in `handoffs/r<n>-triage.md` into `## fixed <sha>`, 1 heading per commit; `not reproduced` items move to `## skipped`, and a round left with no fix replaces `## queued` with `no findings queued`
    - mark addressed github comments as resolved: `bin/resolve-pr-comments --confirm <pr-number>`
-   - done when every queued item from step 6 is addressed; then go to step 4 (next round)
+   - done when every queued item from step 6 is addressed and `<loop-check> fixed` and `<loop-check> editing` pass; then go to step 4 (next round)
    - if step 6 hasn't identified anything to address, go to step 8
-8. mark all github comments as resolved, update the PR description/title if needed. the loop is finished
+8. finish the loop:
+   - mark all github comments as resolved
+   - spawn `<helpers>` to collect evidence that's missing or stale, especially screenshots or videos of the final state
+   - once they've finished, rewrite the PR title and description per `/pr` where the loop changed what they describe
+   - add the loop's evidence per `/pr`: passed manual checks plus screenshots or videos from `evidence/`
+   - do these only here, once; rounds leave the description as it is
+   - write the final report per `<result>`. the loop is finished once `<loop-check> all` passes
 
-- if merge conflicts appear, resolve
-- stacked PR: before steps 3, 4 and 8, check whether the parent PR has merged. if so, this PR must target `develop` with only its own changes. once a round was reviewed, compare those changes with the last reviewed ones (e.g. `git range-diff`): equivalent goes to step 8 once CI passes on the new head, a real difference such as a conflict resolution runs another round. the repo squash-merges and deletes merged branches, so the parent's commits stay in the child until you drop them (`pull/<parent-number>/head` keeps the parent's final head). github may already have rebased or retargeted the child, so start from the freshly fetched PR branch and force-push only with a lease from that fetch
+- if merge conflicts appear, resolve them per `<editing>`
+- `<base>` is the PR's base branch: the parent branch for a stacked PR, else `develop`; before the PR exists, the branch it will target
+- `<dispatch>` for a prompt file is a sub-agent prompt that says to read `<checkout>/.agents/skills/loop/<file>` in full before anything else and follow it, then gives each value the file names (`<loop-name>`, `<n>`, `<base>`, ...) already resolved. `<checkout>` is `git rev-parse --show-toplevel`
+- `<loop-check>` is `node .agents/skills/loop/scripts/loop-check.mts <loop-name> <check> --base origin/<base> --round <n>`, where `<check>` is the name after `<loop-check>` (e.g. `docs`, `all`) and `<n>` is 0 in steps 1-2 and the current round from step 4 on; each failure names what to fix
+- if a `<loop-check>` failure is wrong for a state you have verified is legitimate, it is a script bug:
+  - quote the exact failure line under `## waivers` in the round's triage with why the state is legitimate, and continue. that check then counts as passed, including in `all`
+  - right away, send a worker to fix the script or this skill and open its PR. it works on a new branch from `origin/develop` in its own worktree, as `<helpers>` sets one up, and leaves this loop's checkout alone
+  - send script bugs you find later to that worker while it runs; spawn a fresh one once it has finished
+  - when it finishes, tell the user its PR link without waiting for the loop to end, and list the waiver with that link in the final report
+- stacked PR:
+  - before steps 3, 4 and 8 and every `<loop-check> editing`, check whether the parent PR has merged. if so, this PR must target `develop` with only its own changes
+  - the repo squash-merges and deletes merged branches, so the parent's commits stay in the child until you drop them (`pull/<parent-number>/head` keeps the parent's final head)
+  - github may already have rebased or retargeted the child, so start from the freshly fetched PR branch and force-push only with a lease from that fetch
+  - once a round was reviewed, compare those changes with the last reviewed ones (e.g. `git range-diff`). equivalent goes to step 8 once CI passes on the new head, where `<loop-check> done` replaces `all` because the rebase rewrote the reviewed SHAs. a real difference, such as a conflict resolution, runs another round
+  - a rebase during step 2 rewrites the reported commits, so append a block to `r0-worker.md` with `agent: orchestrator`, `base: <new base>` and the rebased commits
+  - a rebase during step 7 ends the round, so skip `<loop-check> fixed` and go to step 4
 - CI failures evidenced as unrelated to the PR are waivers: record them, continue the loop, and exclude them from the 3-round stop condition
-- if 3 rounds expose symptoms of the same in-scope problem or a fix expands the contract, stop and propose 2-3 ways forward
+- if 3 rounds expose symptoms of the same in-scope problem, don't stop yet: per `<decisions>`, name the assumption the failed fixes share, check it, then run 1 recovery round with a materially different in-scope approach and a fresh worker, recorded under `## decisions`. if the problem survives that round, stop and report the exact blocker with 1 recommended way forward and the closest real alternative
+- if a fix would expand the contract, look for one inside it first; if there is none, ask per `<decisions>`
 - if the user supplied a max round count (i.e. '/loop --max-rounds 8', '/loop r8'), add it to `contract.md` stop conditions as a cap, not a target. if you've reached it, only execute the next round (in this example, it will be round 9) until step 6 and report the status (feedback that passed triaging, failed validations, CI failures, etc.) so that the user can decide what to address and how to resume
 - if the user invoked this skill when the work is already completed or mentioned something like '/loop on this code', skip step 2
 - if a github ai code review provider has timed out or failed for this PR, remember the waiver and don't wait for that provider again in later rounds unless it recovers
 - if the PR is already opened, skip step 3
 - don't add PR comments
-- don't routinely describe what each round did
+- talk to the user only per `<updates>`
 
 </what-to-do>
+
+<updates>
+
+these rules override your harness's progress-update guidance for the whole loop
+
+the user follows the loop through the PR and your plan list; the loop dir is your memory, never theirs
+
+write to the user only:
+
+- at the start: 1 sentence naming the PR or branch and any skipped steps
+- when only the user can unblock you, after you've tried every route: start with `BLOCKED`, ideally with a 1-click fix
+- when something needs action now, such as a data or security exposure
+- when the step 1 contract check or `<decisions>` says to ask
+- at a stop condition
+- when a script-fix PR from a `<loop-check>` waiver opens: its link
+- at the end: the final report
+
+say each question or blocker once, then keep running whatever doesn't depend on the answer
+
+everything else is quiet: rounds, dispatches, waits, finished sub-agents and checks, pushes, triage
+
+- a notification or timer is environment, not the user: persist what landed and keep waiting
+- where a wake-up must end with text, that text is 1 short line naming what's still pending
+- a note you can't avoid is 1 sentence alongside your next tool call
+- side findings beyond the contract, such as an unrelated bug or odd data, stay unfixed, except `<loop-check>` bugs
+
+the final report starts with `the loop has finished 🎉`, has no length limit and stands on its own
+
+it covers, in plain words rather than loop files or ids:
+
+- outcome and PR link first
+- the evidence summary from `<result>`
+- the "changes vs your request" section from `<result>`
+- skips worth a second look, side findings with evidence and anything unverified
+- when step 2 was skipped, a summary of what the loop changed in the code it started from
+
+a clean 3-round loop is 2 chat messages: the start line, such as "starting `/loop` on #3784", then the final report
+
+</updates>
 
 <loop-dir>
 
 everything lives in `playground/loops/<loop-name>/`:
 
+- `request.md` - the user's original request, read-only after step 1; the baseline for the final report, so later user answers go to `## decisions`, not here
 - `contract.md` - the contract (step 1)
 - `validation.md` - manual validation assertions with stable ids (step 1)
 - `validation-state.json` - assertion state, rules in `<validation-state>`
@@ -106,8 +169,9 @@ everything lives in `playground/loops/<loop-name>/`:
   - `comment`: proposed change and why
   - `reason`: reason
   - `source`: handoff or PR comment link(s)
-- `handoffs/` - 1 report per spawned agent per round: `r<n>-<slug>.md` for reviewers, `r<n>-validator.json` for the validator, `r<n>-codex-native/review-*/review.md` for codex native review, and `r<n>-triage.md` for your dispositions per `<triage-report>`
+- `handoffs/` - 1 report per spawned agent per round: `r<n>-worker.md` for the code changes (`r0` for step 2) plus `r<n>-worker-progress.md` for a long batch, `r<n>-<slug>.md` for reviewers, `r<n>-validator.json` for the validator, `r<n>-codex-native/review-*/review.md` (or `waiver.md`) for codex native review, and `r<n>-triage.md` for your dispositions per `<triage-report>`; `r0-triage.md` holds decisions, user answers and waivers from steps 1-2
 - `evidence/` - screenshots, response dumps, output snippets referenced from reports
+- `helpers/` - full results from `<helpers>`, 1 file or folder per helper
 
 update verified environment facts, validation details and evidence at any time; only the user may change goals, non-goals, accepted tradeoffs or hard boundaries
 
@@ -120,6 +184,7 @@ update verified environment facts, validation details and evidence at any time; 
 - `handoffs/r<n>-triage.md` records your disposition of every finding in the round: handoff findings, validator failures, PR comments and CI failures; reasons for skips stay in `skipped-review-comments.md`
 - step 6 writes it with queued items under `## queued`; step 7 turns that into 1 `## fixed <sha>` heading per commit
 - a round with nothing to queue still gets the file, stating `no findings queued`
+- `## decisions` records each material decision per `<decisions>`, and each user answer, with who decided
 
 sample:
 
@@ -136,6 +201,9 @@ sample:
 
 ## waivers
 - CI chromium timeout in storybook, unrelated — evidence/ci-r2.txt
+
+## decisions
+- r2-thermo cache invalidation: keyed the cache by record version instead of adding an expiry job; options: version key, expiry job; why: removes the stale-read class with no new moving part; if wrong: 1 cache miss per write — orchestrator
 ```
 
 </triage-report>
@@ -162,64 +230,66 @@ sample:
 
 </validation-state>
 
-<reviewer-prompt-suffix>
+<decisions>
 
-loop dir: `playground/loops/<loop-name>/`; read `contract.md` and `skipped-review-comments.md` if it exists. match skips by proposed change, not wording; report only novel findings
+decide choices inside the contract yourself and continue; don't ask the user about them. when choosing, apply in order:
 
-<review-mode-instructions>
+1. the contract and `request.md`: satisfy every goal and behaviour to preserve. never meet a goal by weakening its validation or relaxing its acceptance criteria
+2. evidence over opinion: prefer the option a test, repro or measurement supports. when 2 options stay close, run the cheapest reversible experiment that separates them
+3. repeated failure is evidence against the approach: name the assumption the failed attempts share and check it before you try another variant
+4. structural guarantees over heuristics: a permission, constraint, allowlist or deny-by-default removes a class of bugs that patching a matcher won't
+5. the user's tendencies, as tie-breakers only: delete or narrow rather than patch; fewer moving parts long term beats the smallest diff; out-of-scope work goes to its own PR, except deleting dead code the change touches; accept a low-severity tradeoff rather than add code to close it
 
-review against the goals, non-goals, preserved behaviour and reuse decisions in `contract.md`. keep findings and remedies within that contract
+record each material decision in the round's triage under `## decisions`: options, choice, why and the cost if wrong. a decision can't waive a failed assertion or a contract goal
 
-trace each new state store, data/table layer, helper and abstraction to a goal and a concrete responsibility the existing implementation cannot carry. flag unrelated additions or loss of preserved behaviour with evidence and the smallest complete remedy. a smaller diff is useful only when it still satisfies the contract
+ask the user only when the next step would:
 
-return your report as the final response with sections (the coordinator or launcher persists it to `playground/loops/<loop-name>/handoffs/r<n>-<slug>.md`):
+- change goals, non-goals, behaviour to preserve, accepted tradeoffs or hard boundaries
+- need authority the user hasn't granted, or be a 1-way door (data loss, irreversible external effects)
+- choose between materially different product outcomes that nothing above settles
 
-- findings (`file:line`, description, evidence, smallest remedy)
-- contract gaps (optional: undocumented quirks you hit)
+ask with 1 recommended answer and the closest real alternative, record the answer under `## decisions`, then continue
 
-you may run read-only commands (grep, file reads, git, etc.), but:
+</decisions>
 
-- don't run tests and static code checks (it's covered separately)
-- don't launch servers/browsers
-- don't modify the repo or any DB
+<editing>
 
-</reviewer-prompt-suffix>
+the contract's `editing` decides who makes code changes:
 
-<validator-task>
+- `inline`: only for a tiny loop, under 10 changed lines of prod code across the whole loop, as `<loop-check> editing` counts them (tests, stories, docs and tooling don't count), where every change is mechanical. record `git rev-parse HEAD` as `<worker-base>`, make the edits per `prompts/worker.md` and write its report under `agent: inline` and `base: <worker-base>` lines
+- `worker`: everything else, including tiny changes that are hard to get right, e.g. auth, concurrency, money, tenant isolation or a design call. a worker makes the edits per `<worker-task>`
+- switch from `inline` to `worker` once the loop outgrows that bound, and stay there
 
-give the validator the loop dir path
+</editing>
 
-the validator:
+<worker-task>
 
-- reads `contract.md`, `validation.md`, `validation-state.json`
-- starts and stops its own server
-- tests only failed assertions through the real surface (agent-browser, rails console, curl, read-only reads)
-- may create/edit files under `playground/`
-- saves evidence to `evidence/`
-- writes `handoffs/r<n>-validator.json`:
+use a same-harness worker. for each batch of items, resume the previous worker through your harness's follow-up to that agent while it is healthy: it already holds the code and the decisions behind it. spawn a fresh one instead when there is no previous worker, or it:
 
-```json
-{
-  "assertions": [
-    {
-      "id": "VAL-01",
-      "status": "pass|fail|blocked",
-      "steps": [{ "action": "...", "expected": "...", "observed": "..." }],
-      "evidence": "...",
-      "issues": "..."
-    }
-  ],
-  "validation_updates": [
-    "text to add to `validation.md` so that later rounds can reuse discovered/created scripts/smokes under `playground/`, repeatable steps, test data, etc."
-  ],
-  "blockers": [],
-  "summary": "..."
-}
-```
+- failed, stopped or can't be reached
+- returned `blocked` last time
+- has had an item come back unfixed twice; a fresh worker gets fresh eyes and is told how many attempts came before
+- has compacted, or its usage shows 50+% of its context window spent
 
-it's the only sub-agent allowed to edit local dev DB data; its hard boundary: side effects in local dev only - no prod/staging writes, no mutating third-party calls, no emails, etc.
+a fresh worker also gets every earlier `handoffs/r*-worker*.md` and `git log origin/<base>..HEAD`; the loop dir and commits, not chat history, are the memory that survives a swap. either way, record `git rev-parse HEAD` as `<worker-base>` before dispatch and state it in the request. while it runs it is the only writer in the checkout, so wait for its report before you touch the worktree
 
-</validator-task>
+send a fresh worker `<dispatch>` for `prompts/worker.md`; a resumed one already holds that file, so it gets only the new values. both get their items and any decision you made that the loop dir doesn't record. persist its report to the handoff path under `agent: <id>` and `base: <worker-base>` lines; a later dispatch in the same round appends its own block
+
+verify the report before you continue: `git status` is clean, `git log <worker-base>..HEAD` matches the reported commits, `git diff <worker-base>` covers each `done` item and stays inside `contract.md`, and the cheapest reported check passes when you rerun it. send a `blocked` or unverified item back to a worker; a contract gap is a fix that expands the contract
+
+</worker-task>
+
+<helpers>
+
+agents are highly reactive to their context, so delegate deep investigation rather than consuming every detail yourself. spawn other sub-agents whenever they save your context or time: internet research, codebase investigation or diagnosis, read-only data checks, screenshots or videos, before/after comparisons, etc. do small lookups yourself
+
+- give each helper its question, what you already know and an output path under `helpers/`; it writes the full result there and returns a short gist. read the file only when the gist could change a decision
+- helpers contribute intelligence while writes stay single-threaded: they leave the checkout, commits and pushes alone; the worker, or you in an `inline` loop, stays the only code writer. evidence meant for the PR or validation goes to `evidence/`
+- a helper that needs another commit runs in its own worktree from `bin/wt-run <ref> -- pwd` and confirms its `HEAD` before starting. remove that worktree once the helper is done
+- side effects stay in local dev, as for the worker. helpers spawn no helpers of their own; run at most 3 at once
+- triage, contract changes and `validation-state.json` stay with you; a helper's result is evidence for them
+
+</helpers>
 
 <result>
 
@@ -229,5 +299,6 @@ the result of your work must be a ready-to-merge, prod-ready PR with:
 - green CI except evidenced unrelated failures recorded as waivers
 - every id in `validation-state.json` passed at the final commit
 - a final evidence summary assembled from `validation-state.json` and `handoffs/` that proves the contract was satisfied
+- a "changes vs your request" section in the final response, compared with `request.md` rather than the latest contract: added work, dropped or deferred items, changed approaches, decisions made without asking (from every `## decisions`), and anything unresolved or waived. for each: requested -> delivered, why, and who decided. write `none` for an empty category. carry the material changes into the PR description
 
 </result>
