@@ -23,7 +23,7 @@ sub-agents leave the codebase untouched: the mapper writes only `map.md`, and th
    - small cuts (3): small changes that drop code or compatibility branches, or reduce cognitive complexity
    - type safety (3)
    - ponytail (3): apply `/ponytail`
-   - architecture (2): follow `/improve-codebase-architecture` (`.agents/skills/improve-codebase-architecture/SKILL.md`) through its explore step, exploring directly in place of its nested sub-agent, and return its candidates in the point format in place of the HTML report and grilling loop
+   - architecture (2): read and follow [/improve-codebase-architecture](../improve-codebase-architecture/SKILL.md) through its explore step, exploring directly in place of its nested sub-agent, and return its candidates in the point format in place of the HTML report and grilling loop
 
    done when all 4 have returned
 
