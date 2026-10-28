@@ -117,7 +117,7 @@ you are the orchestrator: you own the loop docs, `validation-state.json`, triage
 
 <updates>
 
-these rules override your harness's progress-update guidance for the whole loop
+these rules override your harness's progress-update guidance for the whole loop. when `/orchestrate-multi-pr-work` dispatched you, everything below goes to the `/orchestrate-multi-pr-work` orchestrator that dispatched you, as its `prompts/owner.md` says, never to the user
 
 the user follows the loop through the PR and your plan list; the loop dir is your memory, never theirs
 
@@ -281,13 +281,12 @@ verify the report before you continue: `git status` is clean, `git log <worker-b
 
 <helpers>
 
-agents are highly reactive to their context, so delegate deep investigation rather than consuming every detail yourself. spawn other sub-agents whenever they save your context or time: internet research, codebase investigation or diagnosis, read-only data checks, screenshots or videos, before/after comparisons, etc. do small lookups yourself
+follow `/helper-sub-agents` (`.agents/skills/helper-sub-agents/SKILL.md`). spawn helpers whenever they save your context or time: internet research, codebase investigation or diagnosis, read-only data checks, screenshots or videos, before/after comparisons, etc.
 
-- give each helper its question, what you already know and an output path under `helpers/`; it writes the full result there and returns a short gist. read the file only when the gist could change a decision
-- helpers contribute intelligence while writes stay single-threaded: they leave the checkout, commits and pushes alone; the worker, or you in an `inline` loop, stays the only code writer. evidence meant for the PR or validation goes to `evidence/`
-- a helper that needs another commit runs in its own worktree from `bin/wt-run <ref> -- pwd` and confirms its `HEAD` before starting. remove that worktree once the helper is done
-- side effects stay in local dev, as for the worker. helpers spawn no helpers of their own; run at most 3 at once
-- triage, contract changes and `validation-state.json` stay with you; a helper's result is evidence for them
+- output dir: `helpers/`; evidence meant for the PR or validation goes to `evidence/`
+- the worker, or you in an `inline` loop, stays the only code writer
+- run at most 3 at once
+- triage, contract changes and `validation-state.json` stay with you
 
 </helpers>
 
