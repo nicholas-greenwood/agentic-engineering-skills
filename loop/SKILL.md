@@ -1,6 +1,7 @@
 ---
 name: loop
-description: use only when the user or another skill tags it
+description: deliver a PR through implementation, review and validation rounds
+disable-model-invocation: true
 ---
 
 you are the orchestrator: you own the loop docs, `validation-state.json`, triage, git pushes, the PR and its gates. a worker sub-agent makes the code changes per `<worker-task>`, unless `<editing>` lets you make them in a tiny loop; other sub-agents review, validate and help per `<helpers>`
@@ -37,7 +38,7 @@ you are the orchestrator: you own the loop docs, `validation-state.json`, triage
 3. open a PR with the `/pr` skill
 4. pin round `<n>` to the pushed commit: on a clean worktree run `git rev-parse --verify 'HEAD^{commit}' > playground/loops/<loop-name>/round-head`, check `<loop-check> round-start` passes, then leave the worktree untouched until step 7. run reviewers and the validator in parallel (reports go to `handoffs/r<n>-*`):
    - independent review agents with clear chat history: default 1; up to 4 for high-risk changes
-     - go with the first different entries from the `/ai-code-review-catalog` skill under `<reviewers>`
+     - read [/ai-code-review-catalog](../ai-code-review-catalog/SKILL.md) and go with the first different entries under `<reviewers>`
      - full review in rounds 1, 2, 3, 6, then every multiple of 5 from 10, or after a contract/core-design or base change; diff-only review otherwise
      - end every reviewer prompt with `<dispatch>` for `prompts/reviewer.md`, adding its `<slug>` and the mode, `full` or `diff-only`
      - read-only reviewers return their report as the final response. pass the handoff path to the claude launcher with `--output`, or use a fresh attempt path outside `handoffs/` with codex `--output-last-message`; accept only a non-empty report from a confirmed successful current attempt, then copy the accepted codex attempt to the handoff path. persist native sub-agent final responses to the handoff path yourself. failed or partial output is diagnostic evidence, never a completed review

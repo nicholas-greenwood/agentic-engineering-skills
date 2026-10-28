@@ -1,0 +1,5 @@
+interface:
+  display_name: "Loop"
+  short_description: "Deliver a PR through implementation, review and validation rounds"
+policy:
+  allow_implicit_invocation: false
