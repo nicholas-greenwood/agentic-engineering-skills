@@ -14,10 +14,6 @@ some of the more reusable agent skills from my engineering setup that are not ti
       <td>1 loop per pr across a multi-pr plan. handles stacked and parallel prs, with progress, blockers and decisions in 1 status file</td>
     </tr>
     <tr>
-      <td><a href="helper-sub-agents/SKILL.md"><code>helper-sub-agents</code></a></td>
-      <td>shared rules for helpers used by <code>loop</code> and <code>orchestrate-multi-pr-work</code></td>
-    </tr>
-    <tr>
       <td><a href="cross-harness-sub-agent/SKILL.md"><code>cross-harness-sub-agent</code></a></td>
       <td>hand tasks between codex and claude code</td>
     </tr>
@@ -48,6 +44,10 @@ some of the more reusable agent skills from my engineering setup that are not ti
     <tr>
       <td><a href="triaging-feedback/SKILL.md"><code>triaging-feedback</code></a></td>
       <td>which code review comments are worth adressing</td>
+    </tr>
+    <tr>
+      <td><a href="helper-sub-agents/SKILL.md"><code>helper-sub-agents</code></a></td>
+      <td>shared rules for helpers used by <code>loop</code> and <code>orchestrate-multi-pr-work</code></td>
     </tr>
     <tr>
       <td><a href="claude-sub-agents/SKILL.md"><code>claude-sub-agents</code></a></td>
