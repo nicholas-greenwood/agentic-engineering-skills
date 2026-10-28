@@ -149,7 +149,7 @@ you stay the only writer of the status file, and owners stay the only writers of
 
 adapt steps 2, 3 and 5 as follows:
 
-- dispatch 1 PR-owner sub-agent per dispatchable PR in a separate worktree. give it the step 2 prompt. it runs `/loop` and may spawn its own review and validation sub-agents in that worktree
+- dispatch 1 PR-owner sub-agent per dispatchable PR in a separate worktree. give it the step 2 prompt. it reads and follows [/loop](../loop/SKILL.md) and may spawn its own review and validation sub-agents in that worktree
 - codex: `spawn_agent`, `fork_turns: none`, `gpt-6.1-sol`, high reasoning. check that children can spawn before dispatch: codex needs `spawn_agent`. report a blocker if unavailable
 - claude code: set up the worktrees and dispatch per the `/claude-sub-agents` skill
 - keep step 3, using agent IDs in place of task deeplinks and the sub-agent dispatch above for newly dispatchable PRs. handle follow-up in this conversation
