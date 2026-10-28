@@ -1,12 +1,13 @@
 ---
 name: ai-code-review-catalog
-description: use only when the user or another skill tags it
+description: available code reviewers, review prompts and model routing
+disable-model-invocation: true
 ---
 
 <reviewers>
 
 - `/cross-harness-sub-agent` with a short broad review prompt written by the main agent
-- native sub-agent using the `/thermo-nuclear-code-quality-review` skill
+- native sub-agent reading and following [/thermo-nuclear-code-quality-review](../thermo-nuclear-code-quality-review/SKILL.md)
 - native sub-agent using `prompts/ponytail-review.md`
 - native sub-agent using `prompts/code-review.md`
 - harness's native code review agent

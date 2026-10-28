@@ -1,0 +1,5 @@
+interface:
+  display_name: "AI Code Review Catalog"
+  short_description: "Available code reviewers, review prompts and model routing"
+policy:
+  allow_implicit_invocation: false
