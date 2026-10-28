@@ -1,0 +1,5 @@
+interface:
+  display_name: "Helper Sub-Agents"
+  short_description: "Shared rules for the helper sub-agents an orchestrating skill spawns"
+policy:
+  allow_implicit_invocation: false
