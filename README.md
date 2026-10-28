@@ -11,7 +11,11 @@ some of the more reusable agent skills from my engineering setup that are not ti
     </tr>
     <tr>
       <td><a href="orchestrate-multi-pr-work/SKILL.md"><code>orchestrate-multi-pr-work</code></a></td>
-      <td>1 <code>loop</code> per pr across a multi-pr plan. handles stacked and parallel prs</td>
+      <td>1 loop per pr across a multi-pr plan. handles stacked and parallel prs, with progress, blockers and decisions in 1 status file</td>
+    </tr>
+    <tr>
+      <td><a href="helper-sub-agents/SKILL.md"><code>helper-sub-agents</code></a></td>
+      <td>shared rules for helpers used by <code>loop</code> and <code>orchestrate-multi-pr-work</code></td>
     </tr>
     <tr>
       <td><a href="cross-harness-sub-agent/SKILL.md"><code>cross-harness-sub-agent</code></a></td>
