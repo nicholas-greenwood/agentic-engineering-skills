@@ -4,7 +4,7 @@ description: shared rules for the helper sub-agents an orchestrating skill spawn
 disable-model-invocation: true
 ---
 
-how an orchestrator such as `/loop` or `/orchestrate-multi-pr-work` uses helpers. the calling skill names when to spawn one, its output dir, its single code writer and how many run at once
+how an orchestrator such as [/loop](../loop/SKILL.md) or [/orchestrate-multi-pr-work](../orchestrate-multi-pr-work/SKILL.md) uses helpers. the calling skill names when to spawn one, its output dir, its single code writer and how many run at once
 
 agents are highly reactive to their context, so delegate deep investigation rather than consuming every detail yourself. do small lookups yourself
 
