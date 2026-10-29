@@ -63,7 +63,7 @@ some of the more reusable agent skills from my engineering setup that are not ti
     </tr>
     <tr>
       <td><a href="writing-skills/SKILL.md"><code>writing-skills</code></a></td>
-      <td>skill mechanics</td>
+      <td>rules for writing skills</td>
     </tr>
   </tbody>
 </table>
