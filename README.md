@@ -34,6 +34,10 @@ some of the more reusable agent skills from my engineering setup that are not ti
       <td>record browser videos for pr descriptions, bug repros and walkthroughs. with captions and highlights</td>
     </tr>
     <tr>
+      <td><a href="upgrade-dependencies/SKILL.md"><code>upgrade-dependencies</code></a></td>
+      <td>upgrade dependencies, 1 pr per group</td>
+    </tr>
+    <tr>
       <td><a href="propose-refactor/SKILL.md"><code>propose-refactor</code></a></td>
       <td>review an area from 4 angles and rank the refactors worth doing</td>
     </tr>
