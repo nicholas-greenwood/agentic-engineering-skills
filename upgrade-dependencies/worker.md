@@ -37,7 +37,7 @@ then:
 - adapt call sites with the smallest change that preserves product behaviour; the scope ceiling grows by the call sites the breaking-change map explains and by named compat settings; redesigns are follow-up work
 - exercise the runtime surfaces the dependency touches through the loop's `validation.md` assertions (headless browser, curl, `bin/rails runner`, local DB); a major upgrade never ships on unit tests alone
 - the PR's risk section names every behaviour change the new major introduces, verified or not
-- review rounds follow `/loop` in full since call sites change; a rebase after `develop` moves gets a diff-only review, never a new full round
+- read and follow [/loop](../loop/SKILL.md) in full for review rounds since call sites change; a rebase after `develop` moves gets a diff-only review, never a new full round
 
 ## evidence
 
@@ -46,7 +46,7 @@ then:
 - run the branch file's checks and verify install warnings, runtime and framework version support, security advisories, and the runtime surfaces the dependency touches
 - security advisories also present on `origin/develop`'s lockfile are baseline: report them once, do not fix them
 - for the `code-quality` (npm) and `tooling` (gem) groups, report new useful rules and checks: for every new lint rule or cop, include its repository hit count, value, simple explanation, and separate bad and good examples. report all new warnings and errors these tools emit. probe opt-in rules under `playground/`; counting a rule does not enable it
-- review budget outside major mode: 1 full `/loop` round for a lockfile-only diff. a further round only when a reviewer finds a defect in the shipped diff; bookkeeping, evidence, or `playground/` feedback closes the round instead
+- review budget outside major mode: 1 full [/loop](../loop/SKILL.md) round for a lockfile-only diff. a further round only when a reviewer finds a defect in the shipped diff; bookkeeping, evidence, or `playground/` feedback closes the round instead
 
 ## environment
 
