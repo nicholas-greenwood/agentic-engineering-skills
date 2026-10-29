@@ -5,11 +5,11 @@ disable-model-invocation: true
 ---
 
 - input: a multi-PR plan
-- output: 1 retained task or PR-owner sub-agent and completed `/loop` per PR, tracked in the [status file](#status-file)
+- output: 1 retained task or PR-owner sub-agent and completed [/loop](../loop/SKILL.md) per PR, tracked in the [status file](#status-file)
 
 - task: in desktop task mode, a codex/claude thread/session/chat visible in its desktop app, created through desktop task tooling; in sub-agent mode, a PR-owner sub-agent
 - codex task deeplink: wait for worktree setup to resolve to a `threadId`, then use `[label](codex://threads/<threadId>)`
-- finished: a PR whose loop has finished with every goal met, whose CI is green apart from failures its loop recorded as waivers per `/loop`, and whose branch merges cleanly into `origin/develop` (`git fetch origin develop`, then `git merge-tree --write-tree origin/develop <branch>`). a stack is finished when all its PRs are
+- finished: a PR whose loop has finished with every goal met, whose CI is green apart from failures its loop recorded as waivers per [/loop](../loop/SKILL.md), and whose branch merges cleanly into `origin/develop` (`git fetch origin develop`, then `git merge-tree --write-tree origin/develop <branch>`). a stack is finished when all its PRs are
 - dispatchable: a root PR, or a stacked PR whose parent PR has finished
 
 ## execution mode
@@ -41,13 +41,13 @@ complete when every dispatchable PR has 1 configured task and the rest remain ga
 ## 3. monitor and advance
 
 - wait on task completion notifications silently
-- on every wake-up, refresh the status file, including PRs the user merged; children of a merged PR carry on under `/loop`'s stacked-PR rules. take round counts from the highest `handoffs/r<n>-*` in each loop dir; counts that lag between wake-ups are fine
+- on every wake-up, refresh the status file, including PRs the user merged; for children of a merged PR, read and follow the stacked-PR rules in [/loop](../loop/SKILL.md). take round counts from the highest `handoffs/r<n>-*` in each loop dir; counts that lag between wake-ups are fine
 - answer an owner's question yourself when the plan settles it, and record it under `deviations` when the answer departs from the plan. otherwise spawn a [helper](#helpers) when the answer may already be in the code or data; only a question nothing settles goes to `needs you`
 - when an owner reports, check its block against the PR's head, base and CI before marking the PR finished. before announcing a finished stack, re-check every PR in it the same way. a loop that stopped with goals unmet is a blocker. carry big departures from the plan in its `changes vs request` into `deviations`
 - let each task cook; message a task only to correct off-rails work, unblock it, or pass on the user's answer to its `needs you` item; don't encourage too much back-and-forth between tasks
 - dispatch newly dispatchable PRs through step 2
 
-complete when every planned PR has a retained task and every `/loop` has finished
+complete when every planned PR has a retained task and every [/loop](../loop/SKILL.md) has finished
 
 ## 4. bring everything together (skip if all PRs are in 1 stack)
 
@@ -136,7 +136,7 @@ the final report stands on its own: every status file section above memory, with
 
 ## helpers
 
-follow `/helper-sub-agents` (`.agents/skills/helper-sub-agents/SKILL.md`), with output under `playground/orchestrations/<name>/helpers/` and at most 5 at once. spawn one:
+read and follow [/helper-sub-agents](../helper-sub-agents/SKILL.md), with output under `playground/orchestrations/<name>/helpers/` and at most 5 at once. spawn one:
 
 - before adding an owner's question to `needs you`, to check whether the plan, code or data answers it
 - to diagnose a stuck or off-rails loop from its loop dir
@@ -151,5 +151,5 @@ adapt steps 2, 3 and 5 as follows:
 
 - dispatch 1 PR-owner sub-agent per dispatchable PR in a separate worktree. give it the step 2 prompt. it reads and follows [/loop](../loop/SKILL.md) and may spawn its own review and validation sub-agents in that worktree
 - codex: `spawn_agent`, `fork_turns: none`, `gpt-6.1-sol`, high reasoning. check that children can spawn before dispatch: codex needs `spawn_agent`. report a blocker if unavailable
-- claude code: set up the worktrees and dispatch per the `/claude-sub-agents` skill
+- claude code: read and follow [/claude-sub-agents](../claude-sub-agents/SKILL.md) to set up the worktrees and dispatch
 - keep step 3, using agent IDs in place of task deeplinks and the sub-agent dispatch above for newly dispatchable PRs. handle follow-up in this conversation
