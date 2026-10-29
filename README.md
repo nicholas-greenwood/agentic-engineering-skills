@@ -26,6 +26,10 @@ some of the more reusable agent skills from my engineering setup that are not ti
       <td>short pr descriptions that explain the change, merge risks and verification evidence</td>
     </tr>
     <tr>
+      <td><a href="agent-browser-diff/SKILL.md"><code>agent-browser-diff</code></a></td>
+      <td>highlight ui differences against a baseline after code changes</td>
+    </tr>
+    <tr>
       <td><a href="record-video/SKILL.md"><code>record-video</code></a></td>
       <td>record browser videos for pr descriptions, bug repros and walkthroughs. with captions and highlights</td>
     </tr>
