@@ -13,7 +13,7 @@ applies to any batch of review feedback: PR comments, reviewer reports, handoff 
    - "better": closes a gap between the code and the goal (defects, missed cases), or improves the code without changing core behavior (simplification, restructuring, code judo)
    - "more": grows behavior beyond the goal - features, abstractions, capabilities, speculative hardening
 4. skip every "more" comment, however good the idea; record it in your report so it can be promoted later
-5. skip every <comments-to-skip> comment (unless you're in round 1/2 of a `/loop`)
+5. skip every <comments-to-skip> comment (unless you're in round 1/2 of a [/loop](../loop/SKILL.md))
 6. weigh each "better" comment as a trade:
    - payoff: for fixes it's `severity * likelihood of occurrence`
    - price: complexity, LOC, maintenance burden, code churn, scope creep, time to implement and review, risk of introducing new problems
