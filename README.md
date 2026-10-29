@@ -61,6 +61,10 @@ some of the more reusable agent skills from my engineering setup that are not ti
       <td><a href="claude-sub-agents/SKILL.md"><code>claude-sub-agents</code></a></td>
       <td>parallel claude code workers, 1 worktree each</td>
     </tr>
+    <tr>
+      <td><a href="writing-skills/SKILL.md"><code>writing-skills</code></a></td>
+      <td>skill mechanics</td>
+    </tr>
   </tbody>
 </table>
 
