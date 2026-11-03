@@ -18,6 +18,13 @@ before writing:
 - sketch the seams the work will be tested at (`/codebase-design` vocabulary): prefer existing seams; place new ones at the highest point possible; the fewer seams, the better - the ideal number is 1. a new seam is unresolved-question material
 - use the domain vocabulary from `GLOSSARY.md`
 
+helpers and prototypes:
+
+- read and follow [/helper-sub-agents](../helper-sub-agents/SKILL.md), with output under `playground/plans/<slug>/helpers/` and at most 5 at once. spawn helpers wherever they save your context or time, e.g. research, reading, data analysis, prototypes. do small things yourself when spawning would cost more than it saves
+- prototype proactively wherever trying something answers a question the plan depends on better than reading can, e.g. a backend flow, a library install, a state model
+- each prototype gets its own helper in its own worktree. that helper is the exception that commits and pushes, to its own throwaway branch only. link the branch from the plan next to the decision it settled
+- multi-variant UI prototypes (the UI branch of `/prototype`) only when the user asks
+
 structure:
 
 - 'tl;dr' must stand alone: it gives the full picture of the change without reading further
@@ -44,7 +51,6 @@ misc:
 
 - the plan will be executed by an ai coding agent, so eliminate the need for human input where possible
 - add a staging deploy only when a verification can't run locally (real provider callbacks, prod-like infra or data volume); then deploy to staging and do those verifications there (as many times as needed)
-- for UI heavy work, default to the `/prototype` skill before finishing the plan: with the user settle UI in a prototype in a new worktree, push it to a branch, link the branch from the plan
 - supporting material (research dossiers, measurements, prototypes) must outlive this worktree: push it to a separate branch and link that branch. `playground/` is gitignored and worktree-local, so never link it
 - the plan can reference un-gitignored files, PRs, branches, links. the plan must not reference chat history
 - before writing the file, prune: delete every line whose removal changes nothing the implementer builds or the reviewer checks
