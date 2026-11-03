@@ -7,7 +7,7 @@ disable-model-invocation: true
 
 you are the orchestrator. worker tasks own the dependency changes and PRs
 
-- task: the worker that owns 1 group. read and follow the execution mode in [/orchestrate-multi-pr-work](../orchestrate-multi-pr-work/SKILL.md): codex creates new threads visible in its desktop app, claude spawns sub-agents, and each takes the other route only when the user asks
+- task: the worker that owns 1 group. codex: a new thread visible in its desktop app. claude code: a desktop session, or a sub-agent as the fallback, per step 3
 
 the prompt names the ecosystem, `npm`, `gem`, or `mise`. its branch file, [`npm.md`](npm.md), [`gem.md`](gem.md), or [`mise.md`](mise.md), holds everything ecosystem-specific for you and the workers; read it and [`worker.md`](worker.md) before step 1
 
@@ -32,10 +32,8 @@ modes:
 
 3. dispatch each non-empty group
    - create 1 task per group in its own worktree; this skill is the authorisation to spawn them
-   - codex thread: `create_thread` with a worktree environment, `gpt-6.1-sol` with high reasoning. `clientThreadId` means setup is queued and completes dispatch; retain it and resolve the task when setup finishes, with no retry or fallback for that group
-   - codex sub-agent: read and follow the codex line of sub-agent mode in [/orchestrate-multi-pr-work](../orchestrate-multi-pr-work/SKILL.md)
-   - claude sub-agent: read and follow [/claude-sub-agents](../claude-sub-agents/SKILL.md)
-   - claude desktop task: `spawn_task` with `auto` permission mode, `claude-opus-5-5` with high reasoning, and `/goal` mode in the prompt
+   - codex: `create_thread` with a worktree environment, `gpt-6.1-sol` with high reasoning. `clientThreadId` means setup is queued and completes dispatch; retain it and resolve the task when setup finishes, with no retry or fallback for that group
+   - claude code: read and follow [/claude-parallel-writers](../claude-parallel-writers/SKILL.md) with 1 writer per group. its fallback order replaces the retry and blocking rule below: a group blocks only after every fallback fails
    - retain the task for follow-up requests
    - after a creation error, reconcile the task list, `git worktree list`, branches, and PRs. retry once only after a definitive failure that left no task, PR, commits, or worktree or branch besides the one you created for the dispatch, which the retry reuses; any other failure, a failed retry, or an unknown outcome blocks the group
    - prompt it with the group, the mode, the exact list as current -> desired version, `worker.md`, the branch file, instructions to read and follow [/loop](../loop/SKILL.md), `bash bin/ensure-environment`, base branch `develop`, "never merge", "own only your branch and PR", and "return the full result plus token-efficient verification commands"
@@ -46,7 +44,7 @@ modes:
 
 4. wait without micromanaging
    - wait until every task finishes or needs attention; read each task's full final answer, not the truncated wait output
-   - a task that surfaces a product choice is blocked: relay the choice with its context to the user and let the task wait for the answer
+   - a task that surfaces a product choice is blocked: relay the choice with its context to the user and resume the task with the answer
    - enforce the scope ceiling in `worker.md`: a task growing beyond it is redirected to report the rest as follow-up work
    - if the user merges a PR mid-run, `develop` now contains it; nothing else changes
 
