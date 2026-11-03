@@ -7,7 +7,7 @@ some of the more reusable agent skills from my engineering setup that are not ti
   <tbody>
     <tr>
       <td><a href="loop/SKILL.md"><code>loop</code></a></td>
-      <td>the core. hand an agent a task and get back a merge-ready pr. workers implement, independent agents review and validate through the real ui or api, and the orchestrator handles feedback, ci and evidence</td>
+      <td>this is how most of the code gets to production. hand an agent a task and get back a merge-ready pr. workers implement, independent agents review and validate through the real ui or api, and the orchestrator handles feedback, ci and evidence</td>
     </tr>
     <tr>
       <td><a href="orchestrate-multi-pr-work/SKILL.md"><code>orchestrate-multi-pr-work</code></a></td>
