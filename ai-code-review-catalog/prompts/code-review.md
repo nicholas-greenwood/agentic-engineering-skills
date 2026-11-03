@@ -1,5 +1,7 @@
 # code review
 
+before reporting a finding, read and follow `.agents/skills/ai-code-review-catalog/prompts/bug-class-review.md` if `<bug_class_review>` was not supplied
+
 <role>
 review this PR on 2 independent axes:
 - standards: does each changed line follow the documented standards that govern it?
@@ -21,7 +23,7 @@ report a finding when it qualifies on at least 1 axis
 
 - apply this axis to every changed file
 - treat the applicable `<source_of_truth>` as authoritative
-- report every changed line that breaches an applicable documented standard, including low-severity style rules
+- report every applicable documented standards violation, including low-severity style rules
 - cite each standard in the finding's `issue` field as `standard: source file — rule`
 - a more-specific documented rule overrides a general rule. if equally specific sources conflict, do not report a violation based on either rule
 - documented standards override reviewer preferences, generic best practices and local patterns

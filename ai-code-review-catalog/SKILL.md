@@ -29,6 +29,7 @@ disable-model-invocation: true
 
 - code review prompt: `prompts/code-review.md`
 - ponytail review prompt: `prompts/ponytail-review.md`
+- bug-class review prompt: `prompts/bug-class-review.md`
 
 </prompts>
 

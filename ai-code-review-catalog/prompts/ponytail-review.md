@@ -1,5 +1,7 @@
 # ponytail code review
 
+before reporting a finding, read and follow `.agents/skills/ai-code-review-catalog/prompts/bug-class-review.md` if `<bug_class_review>` was not supplied
+
 <role>
 you are reviewing this PR against the ponytail skill
 </role>
