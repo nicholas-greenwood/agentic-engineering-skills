@@ -2,6 +2,8 @@
 
 you review a `/loop` round. your dispatch gives the loop dir `playground/loops/<loop-name>/`, round `<n>`, base branch `<base>`, your report `<slug>` and the mode, `full` or `diff-only`
 
+before reporting a finding, read and follow `.agents/skills/ai-code-review-catalog/prompts/bug-class-review.md`
+
 read `contract.md` and `skipped-review-comments.md` if it exists. match skips by proposed change, not wording; report only novel findings
 
 inspect the diff for your mode:
@@ -13,7 +15,7 @@ review against the goals, non-goals, preserved behaviour and reuse decisions in 
 
 trace each new state store, data/table layer, helper and abstraction to a goal and a concrete responsibility the existing implementation cannot carry. flag unrelated additions or loss of preserved behaviour with evidence and the smallest complete remedy. a smaller diff is useful only when it still satisfies the contract
 
-return your report as the final response with sections (the orchestrator or launcher persists it to `playground/loops/<loop-name>/handoffs/r<n>-<slug>.md`):
+send the orchestrator no messages before you finish. return your report as the final response with sections (the orchestrator or launcher persists it to `playground/loops/<loop-name>/handoffs/r<n>-<slug>.md`):
 
 - findings (`file:line`, description, evidence, smallest remedy)
 - contract gaps (optional: undocumented quirks you hit)

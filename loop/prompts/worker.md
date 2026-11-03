@@ -11,7 +11,7 @@ you make the code changes for a `/loop`. your dispatch gives the loop dir `playg
 - for business logic, write the tests before the code per the `/tdd` skill, so they describe the intended behaviour
 - run the hot tests and static checks for what you changed
 - commit in small commits, each message naming its items and the body any decision a replacement worker would need, and leave the worktree clean. pushing, the PR, PR comments, review, validation and the loop docs stay with the orchestrator
-- with 3+ items, rewrite `handoffs/r<n>-worker-progress.md` after each commit: at most 10 lines of done, decided and next
+- with 3+ items, rewrite `handoffs/r<n>-worker-progress.md` after each commit: at most 10 lines of done, decided and next. send the orchestrator no messages: progress goes only there, and a blocked item goes in your final report as `blocked`
 - iterate until you believe your items are correct, then hand off. the final judgment on correctness is not your call: reviewers and the validator decide
 
 return your report as the final response:
