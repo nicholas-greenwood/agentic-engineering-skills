@@ -1,0 +1,5 @@
+interface:
+  display_name: "Claude Parallel Writers"
+  short_description: "Run parallel Claude Code writers as desktop sessions, with sub-agents as the fallback"
+policy:
+  allow_implicit_invocation: false
