@@ -84,15 +84,15 @@ last updated: 28 Oct 14:32 GMT
 
 ## PRs
 
-⏸️ waiting, ▶️ running, ⛔ blocked, ✅ finished
+⌛ waiting, ▶️ running, ⛔ blocked, ✅ finished, 🟣 merged
 
 | | PR | stack | round | owner | blockers |
 | --- | --- | --- | --- | --- | --- |
-| merged | [#100](<url>) feed events table | A | 2 | [pr00](<owner link>) | |
+| 🟣 | [#100](<url>) feed events table | A | 2 | [pr00](<owner link>) | |
 | ✅ | [#101](<url>) feed events model | A | 3 | [pr01](<owner link>) | |
 | ▶️ | [#102](<url>) feed events UI | A | 2 | [pr02](<owner link>) | |
 | ⛔ | [#103](<url>) weekly brief | B | 4 | [pr03](<owner link>) | [B1](#b1-<slug>) |
-| ⏸️ | PR 4 remove old machinery | B | | | |
+| ⌛ | PR 4 remove old machinery | B | | | |
 
 ## needs you
 
@@ -117,7 +117,7 @@ expand below
 - line 1: `DONE`, `COMPLETELY BLOCKED` when nothing can advance without the user, `PARTIALLY BLOCKED` when some work still can, or `WORKING`; no other values
 - last updated: the output of `date '+%d %b %H:%M %Z'`, nothing else
 - ready to merge: every current merge unit, as defined at the top, in merge order, each with its PRs, a 2-5 word name and the exact merge command; `none yet` when there is none. a unit drops off once merged
-- status: 1 of the 4 legend emojis alone, or the text `merged`; any other state is text too. add 1-3 words only when they say what the status can't
+- status: 1 of the 5 legend emojis alone; any other state is text. add 1-3 words only when they say what the status can't
 - PR: the PR link and a 2-5 word title, or `PR <n>` and the title before it opens. owner: a markdown link to its owner link, as defined at the top. blockers: the PR's `needs you` ids, each linked to its heading. cells hold nothing else; detail goes to memory
 - needs you: only what the user alone can resolve, after you've tried every route. resolved items move into memory
 - deviations: big decisions by you or the loops that depart from the plan, most important first. small in-loop deviations stay out
