@@ -24,7 +24,7 @@ report a finding when it qualifies on at least 1 axis
 - apply this axis to every changed file
 - treat the applicable `<source_of_truth>` as authoritative
 - report every applicable documented standards violation, including low-severity style rules
-- cite each standard in the finding's `issue` field as `standard: source file — rule`
+- cite each standard in the finding's `issue` field as `standard: source file - rule`
 - a more-specific documented rule overrides a general rule. if equally specific sources conflict, do not report a violation based on either rule
 - documented standards override reviewer preferences, generic best practices and local patterns
 - a standards violation requires direct support from a cited source. heuristic design, smell and simplification findings belong to the separate ponytail review
