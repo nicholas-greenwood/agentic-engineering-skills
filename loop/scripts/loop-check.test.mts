@@ -130,7 +130,7 @@ function reviewedRound() {
   loop('handoffs/r1-thermo.md', 'findings: none\n')
   loop('handoffs/r1-codex-native/review-abc/review.md', 'NO_ISSUES_FOUND\n')
   loop('handoffs/r1-validator.json', JSON.stringify({ assertions: [pass(1, 'VAL-01'), pass(1, 'VAL-02')] }))
-  loop('handoffs/r1-triage.md', `# r1 — ${reviewed} — orchestrator: claude\n\nno findings queued\n`)
+  loop('handoffs/r1-triage.md', `# r1 - ${reviewed} - orchestrator: claude\n\nno findings queued\n`)
   return reviewed
 }
 
@@ -602,10 +602,10 @@ describe('triage', () => {
   test('requires the round SHA and a disposition for every failed assertion', () => {
     const head = pushAndPin()
     loop('handoffs/r1-validator.json', JSON.stringify({ assertions: [{ id: 'VAL-02', status: 'fail' }] }))
-    loop('handoffs/r1-triage.md', `# r1 — ${head} — orchestrator: claude\n\nno findings queued\n`)
+    loop('handoffs/r1-triage.md', `# r1 - ${head} - orchestrator: claude\n\nno findings queued\n`)
     assert.match(failures('triage').join('\n'), /does not dispose of VAL-02/u)
 
-    loop('handoffs/r1-triage.md', `# r1 — ${head} — orchestrator: claude\n\n## queued\n- r1-validator VAL-02 empty name\n`)
+    loop('handoffs/r1-triage.md', `# r1 - ${head} - orchestrator: claude\n\n## queued\n- r1-validator VAL-02 empty name\n`)
     assert.deepEqual(failures('triage'), [])
   })
 
@@ -618,7 +618,7 @@ describe('triage', () => {
       JSON.stringify({ assertions: [{ id: 'VAL-01', status: 'blocked' }, { id: 'VAL-02', status: 'fail' }] }),
     )
     assert.deepEqual(failures('reports'), [])
-    loop('handoffs/r1-triage.md', `# r1 — ${head} — orchestrator: claude\n\n## queued\n- VAL-02\n`)
+    loop('handoffs/r1-triage.md', `# r1 - ${head} - orchestrator: claude\n\n## queued\n- VAL-02\n`)
     assert.match(failures('triage').join('\n'), /does not dispose of VAL-01/u)
     loop('handoffs/r1-validator.json', '{"assertions": [')
     assert.deepEqual(failures('reports'), ['invalid JSON in handoffs/r1-validator.json'])
@@ -627,19 +627,19 @@ describe('triage', () => {
 
   test('triage rejects `## queued` next to `no findings queued`', () => {
     const head = pushAndPin()
-    loop('handoffs/r1-triage.md', `# r1 — ${head} — orchestrator: claude\n\n## queued\nno findings queued\n`)
+    loop('handoffs/r1-triage.md', `# r1 - ${head} - orchestrator: claude\n\n## queued\nno findings queued\n`)
     assert.match(failures('triage').join('\n'), /if nothing is queued, drop the `## queued` heading; otherwise reword that line/u)
   })
 
   test('`no findings queued` quoted inside a queued item is not the status line', () => {
     const head = pushAndPin()
-    loop('handoffs/r1-triage.md', `# r1 — ${head} — orchestrator: claude\n\n## queued\n- add a test for \`no findings queued\`\n`)
+    loop('handoffs/r1-triage.md', `# r1 - ${head} - orchestrator: claude\n\n## queued\n- add a test for \`no findings queued\`\n`)
     assert.deepEqual(failures('triage'), [])
     passAll(head)
-    loop('handoffs/r1-triage.md', `# r1 — ${head} — orchestrator: claude\n\n## skipped\n- x mentions no findings queued in prose\n`)
+    loop('handoffs/r1-triage.md', `# r1 - ${head} - orchestrator: claude\n\n## skipped\n- x mentions no findings queued in prose\n`)
     assert.match(failures('fixed').join('\n'), /no `## fixed <sha>` heading or `no findings queued`/u)
     for (const line of ['no findings queued; 3 skipped as out of scope', '- no findings queued (all skipped)', '**no findings queued**', 'No findings queued.']) {
-      loop('handoffs/r1-triage.md', `# r1 — ${head} — orchestrator: claude\n\n${line}\n`)
+      loop('handoffs/r1-triage.md', `# r1 - ${head} - orchestrator: claude\n\n${line}\n`)
       assert.deepEqual(failures('triage'), [], line)
       assert.deepEqual(failures('fixed'), [], line)
     }
@@ -651,7 +651,7 @@ describe('fixed', () => {
     const round = pushAndPin()
     const fix = commit('app/a.rb', 'fixed\n', 'fix VAL-02')
     git('push', '-q')
-    loop('handoffs/r1-triage.md', `# r1 — ${round} — orchestrator: claude\n\n## fixed ${fix.slice(0, 7)}\n- VAL-02\n`)
+    loop('handoffs/r1-triage.md', `# r1 - ${round} - orchestrator: claude\n\n## fixed ${fix.slice(0, 7)}\n- VAL-02\n`)
     loop('handoffs/r1-worker.md', `agent: abc123\nbase: ${round}\n\ncommits: ${fix.slice(0, 7)} VAL-02\n`)
     assert.deepEqual(failures('fixed'), [])
   })
@@ -660,7 +660,7 @@ describe('fixed', () => {
     const round = pushAndPin()
     const fix = commit('app/a.rb', 'fixed\n')
     git('push', '-q')
-    loop('handoffs/r1-triage.md', `# r1 — ${round} — orchestrator: claude\n\n## fixed ${fix.slice(0, 7)}\n- VAL-02\n`)
+    loop('handoffs/r1-triage.md', `# r1 - ${round} - orchestrator: claude\n\n## fixed ${fix.slice(0, 7)}\n- VAL-02\n`)
     loop('handoffs/r1-worker.md', `agent: abc\nbase: ${fix}\n`)
     assert.match(failures('fixed').join('\n'), new RegExp(`r1-worker.md does not report commits ${fix.slice(0, 7)}`, 'u'))
   })
@@ -672,7 +672,7 @@ describe('fixed', () => {
     const rebased = commit('app/a.rb', 'a\n', 'rebased')
     const fix = commit('app/b.rb', 'fixed\n')
     git('push', '-q', '-f')
-    loop('handoffs/r1-triage.md', `# r1 — ${round} — orchestrator: claude\n\n## fixed ${fix.slice(0, 7)}\n- VAL-02\n`)
+    loop('handoffs/r1-triage.md', `# r1 - ${round} - orchestrator: claude\n\n## fixed ${fix.slice(0, 7)}\n- VAL-02\n`)
     loop('handoffs/r1-worker.md', `agent: abc\nbase: ${round}\n\ncommits: ${rebased.slice(0, 7)} ${fix.slice(0, 7)}\n`)
     const result = failures('fixed')
     assert.equal(result.length, 1)
@@ -685,17 +685,17 @@ describe('fixed', () => {
     const first = commit('app/a.rb', 'fixed\n')
     const second = commit('app/b.rb', 'fixed\n')
     git('push', '-q')
-    loop('handoffs/r1-triage.md', `# r1 — ${round} — orchestrator: claude\n\n## fixed ${first.slice(0, 7)}\n- VAL-02\n`)
+    loop('handoffs/r1-triage.md', `# r1 - ${round} - orchestrator: claude\n\n## fixed ${first.slice(0, 7)}\n- VAL-02\n`)
     loop('handoffs/r1-worker.md', `agent: abc\nbase: ${round}\n\ncommits: ${first.slice(0, 7)} ${second.slice(0, 7)}\n`)
     assert.match(failures('fixed').join('\n'), new RegExp(`without a \`## fixed <sha>\` heading: ${second.slice(0, 7)}`, 'u'))
   })
 
   test('requires `no findings queued` when nothing is fixed', () => {
     const round = pushAndPin()
-    loop('handoffs/r1-triage.md', `# r1 — ${round} — orchestrator: claude\n\n## skipped\n- VAL-02\n`)
+    loop('handoffs/r1-triage.md', `# r1 - ${round} - orchestrator: claude\n\n## skipped\n- VAL-02\n`)
     assert.match(failures('fixed').join('\n'), /no `## fixed <sha>` heading or `no findings queued`/u)
 
-    loop('handoffs/r1-triage.md', `# r1 — ${round} — orchestrator: claude\n\nno findings queued\n`)
+    loop('handoffs/r1-triage.md', `# r1 - ${round} - orchestrator: claude\n\nno findings queued\n`)
     assert.deepEqual(failures('fixed'), [])
   })
 
@@ -703,7 +703,7 @@ describe('fixed', () => {
     const round = pushAndPin()
     commit('app/a.rb', 'fixed\n')
     git('push', '-q')
-    loop('handoffs/r1-triage.md', `# r1 — ${round} — orchestrator: claude\n\n## queued\n- VAL-02\n`)
+    loop('handoffs/r1-triage.md', `# r1 - ${round} - orchestrator: claude\n\n## queued\n- VAL-02\n`)
     loop('handoffs/r1-worker.md', `agent: abc123\nbase: ${round}\n\nall done\n`)
     const result = failures('fixed').join('\n')
     assert.match(result, /still has `## queued`/u)
@@ -722,7 +722,7 @@ describe('fixed', () => {
     git('merge', '-q', '--no-ff', '--no-edit', 'develop')
     const merge = git('rev-parse', 'HEAD')
     git('push', '-q')
-    loop('handoffs/r1-triage.md', `# r1 — ${round} — orchestrator: claude\n\n## fixed ${merge.slice(0, 7)}\n- conflict\n`)
+    loop('handoffs/r1-triage.md', `# r1 - ${round} - orchestrator: claude\n\n## fixed ${merge.slice(0, 7)}\n- conflict\n`)
     loop('handoffs/r1-worker.md', `agent: abc\nbase: ${round}\n\ncommits: ${merge.slice(0, 7)} merge develop\n`)
     assert.deepEqual(failures('fixed'), [])
   })
@@ -731,7 +731,7 @@ describe('fixed', () => {
     const round = pushAndPin()
     const fix = commit('app/a.rb', 'fixed\n')
     git('push', '-q')
-    loop('handoffs/r1-triage.md', `# r1 — ${round} — orchestrator: claude\n\n## fixed \`${fix.slice(0, 7)}\`\n- VAL-02\n`)
+    loop('handoffs/r1-triage.md', `# r1 - ${round} - orchestrator: claude\n\n## fixed \`${fix.slice(0, 7)}\`\n- VAL-02\n`)
     loop('handoffs/r1-worker.md', `agent: abc\nbase: ${round}\n\ncommits: ${fix.slice(0, 7)} VAL-02\n`)
     assert.deepEqual(failures('fixed'), [])
   })
@@ -792,7 +792,7 @@ describe('done', () => {
   test('done fails while the round triage still has `## queued`', () => {
     const head = pushAndPin()
     passAll(head)
-    loop('handoffs/r1-triage.md', `# r1 — ${head} — orchestrator: claude\n\n## queued\n- r1-thermo nit\n`)
+    loop('handoffs/r1-triage.md', `# r1 - ${head} - orchestrator: claude\n\n## queued\n- r1-thermo nit\n`)
     assert.match(failures('done').join('\n'), /r1-triage.md still has `## queued`/u)
   })
 
@@ -949,16 +949,16 @@ describe('whole loop', () => {
       assert.deepEqual(failures('reports'), [])
       loop('last-reviewed-head', `${head}\n`)
       if (round < 3) {
-        loop(`handoffs/r${round}-triage.md`, `# r${round} — ${head} — orchestrator: claude\n\n## queued\n- r${round}-thermo nit\n`)
+        loop(`handoffs/r${round}-triage.md`, `# r${round} - ${head} - orchestrator: claude\n\n## queued\n- r${round}-thermo nit\n`)
         assert.deepEqual(failures('triage'), [])
         const fix = commit(`app/r${round}.rb`, 'fix\n')
         git('push', '-q')
-        loop(`handoffs/r${round}-triage.md`, `# r${round} — ${head} — orchestrator: claude\n\n## fixed ${fix}\n- r${round}-thermo nit\n`)
+        loop(`handoffs/r${round}-triage.md`, `# r${round} - ${head} - orchestrator: claude\n\n## fixed ${fix}\n- r${round}-thermo nit\n`)
         loop(`handoffs/r${round}-worker.md`, `agent: abc\nbase: ${head}\n\ncommits: ${fix} nit\n`)
         assert.deepEqual(failures('fixed'), [])
         assert.deepEqual(failures('editing'), [])
       } else {
-        loop(`handoffs/r${round}-triage.md`, `# r${round} — ${head} — orchestrator: claude\n\nno findings queued\n`)
+        loop(`handoffs/r${round}-triage.md`, `# r${round} - ${head} - orchestrator: claude\n\nno findings queued\n`)
         assert.deepEqual(failures('triage'), [])
         passAll(head)
         assert.deepEqual(

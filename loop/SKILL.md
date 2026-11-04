@@ -97,7 +97,7 @@ the first line is exactly `THE LOOP HAS FINISHED 🎉`, or `THE LOOP HAS STOPPED
 4. pin round `<n>` to the pushed commit: on a clean worktree run `git rev-parse --verify 'HEAD^{commit}' > playground/loops/<loop-name>/round-head`, check `<loop-check> round-start` passes, then leave the worktree untouched until step 7. run reviewers and the validator in parallel (reports go to `handoffs/r<n>-*`):
    - independent review agents with clear chat history: default 1; up to 4 for high-risk changes
      - read and follow [/ai-code-review-catalog](../ai-code-review-catalog/SKILL.md), choosing the first different entries under `<reviewers>`
-     - full review in rounds 1 and 2 and every multiple of 5, or after a contract/core-design or base change; diff-only review otherwise
+     - full review in rounds 1 and 2 and every multiple of 10, or after a contract/core-design or base change; diff-only review otherwise
      - end every reviewer prompt with `<dispatch>` for `prompts/reviewer.md`, adding its `<slug>` and the mode, `full` or `diff-only`
      - read-only reviewers return their report as the final response. pass the handoff path to the claude launcher with `--output`, or use a fresh attempt path outside `handoffs/` with codex `--output-last-message`; accept only a non-empty report from a confirmed successful current attempt, then copy the accepted codex attempt to the handoff path. persist native sub-agent final responses to the handoff path yourself. failed or partial output is diagnostic evidence, never a completed review
    - run 1 codex native review agent with the matching mode through `bin/codex-native-review`; local reviewers still carry contract and skip coverage
@@ -211,7 +211,7 @@ update verified environment facts, validation details and evidence at any time; 
 sample:
 
 ```md
-# r2 — <round sha> — orchestrator: claude|codex
+# r2 - <round sha> - orchestrator: claude|codex
 
 ## fixed <sha>
 - r2-thermo stale cache key after the rename
@@ -222,10 +222,10 @@ sample:
 - r2-thermo, r2-ponytail extract a shared helper
 
 ## waivers
-- CI chromium timeout in storybook, unrelated — evidence/ci-r2.txt
+- CI chromium timeout in storybook, unrelated - evidence/ci-r2.txt
 
 ## decisions
-- r2-thermo cache invalidation: keyed the cache by record version instead of adding an expiry job; options: version key, expiry job; why: removes the stale-read class with no new moving part; if wrong: 1 cache miss per write — orchestrator
+- r2-thermo cache invalidation: keyed the cache by record version instead of adding an expiry job; options: version key, expiry job; why: removes the stale-read class with no new moving part; if wrong: 1 cache miss per write - orchestrator
 ```
 
 </triage-report>
