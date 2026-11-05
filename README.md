@@ -31,7 +31,7 @@ some of the more reusable agent skills from my engineering setup that are not ti
     </tr>
     <tr>
       <td><a href="propose-refactor/SKILL.md"><code>propose-refactor</code></a></td>
-      <td>review an area from 4 angles and rank the refactors worth doing</td>
+      <td>review an area from 5 angles and rank the refactors worth doing</td>
     </tr>
     <tr>
       <td><a href="llm-evaluation/SKILL.md"><code>llm-evaluation</code></a></td>
