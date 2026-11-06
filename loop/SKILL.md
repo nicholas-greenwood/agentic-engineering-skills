@@ -66,6 +66,8 @@ the first line is exactly `THE LOOP HAS FINISHED 🎉`, or `THE LOOP HAS STOPPED
 
 <what-to-do>
 
+if skipping step 2, follow [the diff handoff](references/diff.md)
+
 1. write the loop docs:
    - `request.md`: an exact copy of the user's request, plus every later message that set scope before step 2, including answers to the check below. run `chmod a-w` on it at the end of step 1 and never edit it again
    - `contract.md` with sections:
