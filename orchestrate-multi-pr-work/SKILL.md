@@ -38,7 +38,7 @@ complete when every dispatchable PR has 1 working owner, and every gated PR has 
 ## 3. monitor and advance
 
 - wait for owner reports without messages
-- after a compaction, outage or restart, reread the status file and resume every unfinished owner by its thread, session or agent id with "resume from your loop dir"
+- after a compaction, outage or restart, read the status file's current state first and resume every unfinished owner by its thread, session or agent id with "resume from your loop dir". consult resolved history only when it explains an active decision
 - whenever an owner reports or you resume, refresh the status file, including PRs the user merged. take round counts from the highest `handoffs/r<n>-*` in each loop dir; counts that lag between refreshes are fine
 - github stacks:
   - once a stacked PR opens, link it: `gh stack link <bottom PR> ... <new PR>` with PR numbers bottom to top, or `gh stack link <stack number> <new PR>` to grow a stack. with PR numbers it pushes nothing and needs no local tracking, so it is safe while owners work
@@ -107,9 +107,52 @@ alternative: <closest real alternative>
 
 ## orchestrator memory
 
-expand below
+expand current restart state first
 
-<details><summary>memory</summary>
+<details><summary>current restart state</summary>
+
+- plan: `/abs/path/plans/<plan>.md`
+- amendment: <current change to the plan>
+- wave 1: stack A
+- wave 2: stack B
+- stack A: #100 -> #101 -> #102
+- stack B: #103 -> PR 4
+- #100 owner id: <retained thread, session or agent id>
+- #100 last verified head: <sha>
+- #101 owner id: <thread, session or agent id>
+- #101 checkout: `/abs/path/pr01`
+- #101 loop: `/abs/path/pr01/playground/loops/<loop>`
+- #101 parent branch: `develop`
+- #101 last verified base: <sha>
+- #101 last verified head: <sha>
+- #101 next action: await merge
+- #102 owner id: <thread, session or agent id>
+- #102 checkout: `/abs/path/pr02`
+- #102 loop: `/abs/path/pr02/playground/loops/<loop>`
+- #102 parent branch: `<pr01-branch>`
+- #102 last verified base: <sha>
+- #102 last verified head: <sha>
+- #102 next action: finish its loop
+- #103 owner id: <thread, session or agent id>
+- #103 checkout: `/abs/path/pr03`
+- #103 loop: `/abs/path/pr03/playground/loops/<loop>`
+- #103 parent branch: `develop`
+- #103 last verified base: <sha>
+- #103 last verified head: <sha>
+- #103 next action: resume after B1 is answered
+- PR 4 parent branch: `<pr03-branch>`
+- PR 4 next action: dispatch when #103 finishes
+- step 4: pending current heads
+- action <slug>: <non-PR action>
+- action <slug> owner: <orchestrator, PR owner or user>
+- action <slug> next step: <what to do next>
+- operative rule from B0: <constraint that still governs the work>
+
+</details>
+
+<details><summary>resolved history</summary>
+
+- 28 oct: B0 resolved by <decision or evidence>
 
 </details>
 ```
@@ -119,9 +162,13 @@ expand below
 - ready to merge: every current merge unit, as defined at the top, in merge order, each with its PRs, a 2-5 word name and the exact merge command; `none yet` when there is none. a unit drops off once merged
 - status: 1 of the 5 legend emojis alone; any other state is text. add 1-3 words only when they say what the status can't
 - PR: the PR link and a 2-5 word title, or `PR <n>` and the title before it opens. owner: a markdown link to its owner link, as defined at the top. blockers: the PR's `needs you` ids, each linked to its heading. cells hold nothing else; detail goes to memory
-- needs you: only what the user alone can resolve, after you've tried every route. resolved items move into memory
+- needs you: only what the user alone can resolve, after you've tried every route. resolved items move into dated resolved history
 - deviations: big decisions by you or the loops that depart from the plan, most important first. small in-loop deviations stay out
-- memory: enough to carry on after compaction: plan location and amendments, wave and stack map, parent branches, absolute worktree and loop-dir paths, owners with their thread, session or agent ids, last verified head per PR, step 4 evidence, actions beyond the PRs and their owners, resolved blockers, next steps
+- current restart state: keep the plan location and operative amendments, wave and stack map, every retained owner's id, every unmerged owner's absolute checkout and loop paths, parent branch and last verified base/head, step 4 evidence, outstanding non-PR actions with owners and next steps. include waiting owners and finished owners whose PRs can reopen
+- repeat each action's short slug on its description, owner and next-step lines
+- replace superseded current facts when a parent, base, head, owner or next action changes. refresh the full recovery coordinates before resuming a reopened or rebased PR, including a previously finished one
+- resolved history: date resolved blockers and superseded decisions here. keep any rule that still governs the work in current restart state; resolution of its originating blocker does not retire the rule
+- write 1 independent fact per physical markdown line in memory. current restart state must support recovery without reading resolved history
 - section links point only at headings outside `<details>`, since anchors don't expand it
 
 ## updates
