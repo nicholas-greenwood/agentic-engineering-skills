@@ -47,6 +47,7 @@ THE LOOP HAS FINISHED 🎉
 
 ## evidence
 - <what was checked, how, and the result, linking screenshots or videos>
+- <quality checks, if any: verdict, spend, and whether the budget ran out with the validator's confidence>
 
 ## changes vs your request
 - added: <requested> -> <delivered>; why; decided by <orchestrator|reviewer|user>
@@ -88,6 +89,7 @@ if skipping step 2, follow [the diff handoff](references/diff.md)
      - each assertion states surface, exact steps, pass criteria, and required evidence (screenshots mandatory for UI flows)
      - each must be executable by a fresh agent with no context beyond the loop dir
      - for any user-facing change, manual `agent-browser` validation is mandatory. to make testing easier consider adding a `tmp` story per the `/storybook` skill
+     - when it applies, add quality assertions per [quality](references/quality.md), e.g. for LLM output, UI or copy
    - init `validation-state.json` per `<validation-state>`
    - run `mkdir -p "playground/loops/<loop-name>"/{handoffs,evidence}`
    - size the docs to the change: a small loop may be a few-line contract with sections marked "n/a" and 1 assertion; a 500 loc loop earns the full template
@@ -119,7 +121,7 @@ if skipping step 2, follow [the diff handoff](references/diff.md)
        ```
      - retain the helper's report path for triage and its log for launcher/provider failures
      - if the launcher fails twice on quota, auth or infra, write the reason and log path to `handoffs/r<n>-codex-native/waiver.md` and continue; the other reviewers still run
-   - run 1 sub-agent as validator through `<dispatch>` for `prompts/validator.md`
+   - run 1 sub-agent as validator through `<dispatch>` for `prompts/validator.md`, with `<quality-budget>` per [quality](references/quality.md) when `validation.md` has quality assertions
 5. collect every step 4 report before triage
    - until every reviewer and validator has finished, only wait and persist each report as it lands. wait in blocking calls, never in short polls:
      - codex: `wait_agent` with `timeout_ms: 3600000` for sub-agents; after a timeout, call it again without commentary. wait for a shell launcher such as `bin/codex-native-review` on its own shell session, with the longest wait that tool allows
