@@ -52,9 +52,9 @@ why and what changed:
 
 merge danger:
 - door: <1-way, 2-way, or unknown>, <rollback or recovery>
+- db migrations: <outcome using a format below>
 - blast radius: <affected users, tenants, workflows, or consumers>
 - <high|medium|low>: <material remaining risk and why it was not verified>
-- db migrations: <outcome using a format below>
 
 verification:
 - <manual check or smoke test and observed result>
@@ -104,7 +104,7 @@ JS
 - name the affected surface, users/tenants, or consumers rather than a vague size label
 - include material remaining risks as `high`, `medium`, or `low`, highest first; state the failure and why it was not verified
 - omit the risk bullet when none remains; add required rollout or recovery steps here when needed
-- always end with `- db migrations: ...`, using the matching format below; follow `/rails-migration-conventions` when migrations exist
+- place `- db migrations: ...` directly below `- door: ...`, using the matching format below; follow `/rails-migration-conventions` when migrations exist
 
 ```md
 - db migrations: none
@@ -144,6 +144,6 @@ why and what changed:
 
 merge danger:
 - door: 2-way, revert
-- blast radius: PR descriptions and reviewer navigation
 - db migrations: none
+- blast radius: PR descriptions and reviewer navigation
 ```
