@@ -42,6 +42,10 @@ some of the more reusable agent skills from my engineering setup that are not ti
       <td>upgrade dependencies, 1 pr per group</td>
     </tr>
     <tr>
+      <td><a href="watch-deploy/SKILL.md"><code>watch-deploy</code></a></td>
+      <td>watch a deploy, with checks tied to what changed</td>
+    </tr>
+    <tr>
       <td><a href="ai-code-review-catalog/SKILL.md"><code>ai-code-review-catalog</code></a></td>
       <td>pretty self-explanatory</td>
     </tr>
@@ -64,6 +68,10 @@ some of the more reusable agent skills from my engineering setup that are not ti
     <tr>
       <td><a href="writing-skills/SKILL.md"><code>writing-skills</code></a></td>
       <td>rules for writing skills</td>
+    </tr>
+    <tr>
+      <td><a href="silent-run/SKILL.md"><code>silent-run</code></a></td>
+      <td>helper</td>
     </tr>
   </tbody>
 </table>
