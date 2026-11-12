@@ -1,0 +1,5 @@
+interface:
+  display_name: "Watch deploy"
+  short_description: "Watch a deploy through its bake window and report a verdict"
+policy:
+  allow_implicit_invocation: false
