@@ -333,6 +333,11 @@ function checkReports(ctx: Context, failures: Failures) {
     : []
   if (nativeReports.length === 0) failures.push(`no non-empty ${native}/review-*/review.md or ${native}/waiver.md`)
 
+  const { ids, state } = assertionState(ctx, failures)
+  const failed = Object.entries(state ?? {})
+    .filter(([, entry]) => entry.status === 'failed')
+    .map(([id]) => id)
+  if (failed.length === 0 && !existsSync(path.join(handoffs, `r${ctx.round}-validator.json`))) return
   const assertions = validatorAssertions(ctx, failures)
   if (assertions === undefined) return
   for (const assertion of assertions) {
@@ -343,11 +348,8 @@ function checkReports(ctx: Context, failures: Failures) {
       failures.push(`validator assertion ${String(assertion.id)} is pass without evidence`)
     }
   }
-  const { ids, state } = assertionState(ctx, failures)
   const reported = new Set(assertions.map((assertion) => String(assertion.id)))
-  const untested = Object.entries(state ?? {})
-    .filter(([id, entry]) => entry.status === 'failed' && !reported.has(id))
-    .map(([id]) => id)
+  const untested = failed.filter((id) => !reported.has(id))
   if (untested.length > 0) failures.push(`validator skipped failed assertions: ${untested.join(', ')}`)
   const unknown = [...reported].filter((id) => !ids.includes(id))
   if (unknown.length > 0) failures.push(`validator reported ids not in validation.md: ${unknown.join(', ')}; use the \`## VAL-xx\` ids`)

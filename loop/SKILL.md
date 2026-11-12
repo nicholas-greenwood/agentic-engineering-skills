@@ -8,9 +8,9 @@ you are the orchestrator: you own the loop docs, `validation-state.json`, triage
 
 <updates>
 
-these rules carry the user's authority and override your harness's progress-update guidance for the whole loop, whether this file reached you as a skill, through a tool or in another agent's prompt. chat is every message the user can see: codex commentary and final answers, claude text between tool calls, and `wrap_up` recaps
+the loop is a silent run: read and follow `.agents/skills/silent-run/SKILL.md`, however this file reached you. it and the rules below carry the user's authority
 
-when another agent dispatched you, such as [/orchestrate-multi-pr-work](../orchestrate-multi-pr-work/SKILL.md) or [/upgrade-dependencies](../upgrade-dependencies/SKILL.md), chat means that agent: skip the start line, and message it only for a question, a blocker, an urgent alert or a script-fix PR link (claude: `SendMessage` to `main` from a sub-agent, or to the dispatcher's session id from a session). if you can't message it mid-run, stop and report `blocked` with the question; it resumes you with the answer. the final report goes to it, and its own prompt may ask for more
+when another agent dispatched you, such as `/orchestrate-multi-pr-work` or `/upgrade-dependencies`, chat means that agent: skip the start line, and message it only for a question, a blocker, an urgent alert or a script-fix PR link (claude: `SendMessage` to `main` from a sub-agent, or to the dispatcher's session id from a session). if you can't message it mid-run, stop and report `blocked` with the question; it resumes you with the answer. the final report goes to it, and its own prompt may ask for more
 
 the user follows the loop through the PR and your plan list; the loop dir is your memory, never theirs
 
@@ -24,14 +24,9 @@ chat messages are exactly these:
 - the final report, also at a stop condition
 - an answer to a user message; then carry on without progress updates
 
-say each question once, then keep running whatever doesn't depend on the answer
+the line that ends a turn: `waiting on <names>`
 
-everything else stays out of the chat: rounds, dispatches, waits, sub-agent results, checks, pushes and triage. record them in the loop dir instead
-
-- a finished sub-agent or background task isn't the user talking to you: save its result and carry on without a message
-- claude: when the app makes you write something to end a turn, write only `waiting on <names>`
-- codex: post no commentary beyond the messages above
-- side findings beyond the contract, such as an unrelated bug or odd data, stay unfixed and go to the final report, except `<loop-check>` bugs
+side findings beyond the contract, such as an unrelated bug or odd data, stay unfixed and go to the final report, except `<loop-check>` bugs
 
 a clean 3-round loop is 2 chat messages: the start line and the final report
 
@@ -98,11 +93,13 @@ if skipping step 2, follow [the diff handoff](references/diff.md)
 2. complete the task against that contract per `<editing>`, with every contract goal as the items; the report goes to `handoffs/r0-worker.md`
    - done when you have verified the report, `<loop-check> editing` passes, every contract goal is implemented and every assertion is either marked passed from the worker's evidence (trivially cheap ones only) or left failed for the validator
 3. open a PR with the `/pr` skill
-4. pin round `<n>` to the pushed commit: on a clean worktree run `git rev-parse --verify 'HEAD^{commit}' > playground/loops/<loop-name>/round-head`, check `<loop-check> round-start` passes, then leave the worktree untouched until step 7. run reviewers and the validator in parallel (reports go to `handoffs/r<n>-*`):
+4. pin round `<n>` to the pushed commit: on a clean worktree run `git rev-parse --verify 'HEAD^{commit}' > playground/loops/<loop-name>/round-head`, check `<loop-check> round-start` passes, then leave the worktree untouched until step 7. run reviewers and any validator in parallel (reports go to `handoffs/r<n>-*`):
    - independent review agents with clear chat history: default 1; up to 4 for high-risk changes
-     - read and follow [/ai-code-review-catalog](../ai-code-review-catalog/SKILL.md), choosing the first different entries under `<reviewers>`
+     - read and follow `.agents/skills/ai-code-review-catalog/SKILL.md`, choosing the first different entries under `<reviewers>`
      - full review in rounds 1 and 2 and every multiple of 10, or after a contract/core-design or base change; diff-only review otherwise
      - end every reviewer prompt with `<dispatch>` for `prompts/reviewer.md`, adding its `<slug>` and the mode, `full` or `diff-only`
+     - rounds 1-2: when the diff touches backend code, the broad review prompt also names backend behaviour: races, retries and duplicate runs, record lifecycle, wrong recipient or groupco
+     - rounds 1-2: add a reviewer following `/data-leak-review` only when the diff touches customer data or groupco scoping (tenant scoping, policies, queries over groupco data, outbound recipients)
      - read-only reviewers return their report as the final response. pass the handoff path to the claude launcher with `--output`, or use a fresh attempt path outside `handoffs/` with codex `--output-last-message`; accept only a non-empty report from a confirmed successful current attempt, then copy the accepted codex attempt to the handoff path. persist native sub-agent final responses to the handoff path yourself. failed or partial output is diagnostic evidence, never a completed review
    - run 1 codex native review agent with the matching mode through `bin/codex-native-review`; local reviewers still carry contract and skip coverage
      - record available verification in `evidence/r<n>-verification.md`: exact commit, commands or CI links, scope and pass/fail/pending status. pending checks may stay pending while review runs
@@ -121,10 +118,10 @@ if skipping step 2, follow [the diff handoff](references/diff.md)
        ```
      - retain the helper's report path for triage and its log for launcher/provider failures
      - if the launcher fails twice on quota, auth or infra, write the reason and log path to `handoffs/r<n>-codex-native/waiver.md` and continue; the other reviewers still run
-   - run 1 sub-agent as validator through `<dispatch>` for `prompts/validator.md`, with `<quality-budget>` per [quality](references/quality.md) when `validation.md` has quality assertions
+   - after the invalidation check in `<validation-state>`, run 1 sub-agent as validator only if `validation-state.json` has a failed id, through `<dispatch>` for `prompts/validator.md` listing those ids, with `<quality-budget>` per [quality](references/quality.md) when `validation.md` has quality assertions
 5. collect every step 4 report before triage
    - until every reviewer and validator has finished, only wait and persist each report as it lands. wait in blocking calls, never in short polls:
-     - codex: `wait_agent` with `timeout_ms: 3600000` for sub-agents; after a timeout, call it again without commentary. wait for a shell launcher such as `bin/codex-native-review` on its own shell session, with the longest wait that tool allows
+     - codex: `wait_agent` with `timeout_ms: 3600000` for sub-agents; after a timeout, call it again without commentary. wait for a shell launcher such as `bin/codex-native-review` on its own shell session with `yield_time_ms: 600000`
      - claude main session: in 1 message, start `bin/codex-native-review` as a background shell command and spawn the round's reviewers and validator without `run_in_background`, so they all report back together
      - claude sub-agent, such as a fallback PR owner or dependency worker: ending a turn ends your run. `Agent` spawns block until the child finishes, so spawn a round's reviewers and validator in 1 message to run them in parallel. a `SendMessage` resume and a background shell command, such as `bin/codex-native-review`, return at once, and their results reach you only with your next tool result. wait for those in foreground shell calls of at most 270s, which also keep your 5-minute prompt cache warm, until every result has landed. a call can return early on a file the job writes, e.g. `sh -c 'i=0; until [ -s <report> ] || [ $i -ge 18 ]; do sleep 15; i=$((i+1)); done'`
    - once `<loop-check> reports` passes, run `cp playground/loops/<loop-name>/{round-head,last-reviewed-head}`
@@ -134,8 +131,7 @@ if skipping step 2, follow [the diff handoff](references/diff.md)
    - use the `/triaging-feedback` skill to triage from 2 sources: the `handoffs/` files and unresolved PR comments (run `bin/unresolved-pr-comments <pr-number>`). filter findings through the contract to prevent looping, disobeying the user and out-of-scope work: skip comments that go beyond the `contract.md` scope. factor in the price of a new loop round; sometimes good enough beats perfect
    - deduplicate skips by proposed change, append new sources to existing entries, and remove entries made obsolete by design changes
    - use the command from the `/fix-ci-failures` skill to fetch CI failures
-   - update `validation-state.json` from the validator report
-   - apply useful `validation_updates` from the validator report to `validation.md`
+   - when a validator ran: update `validation-state.json` from its report and apply its useful `validation_updates` to `validation.md`
    - record skipped comments in `skipped-review-comments.md`
    - write `handoffs/r<n>-triage.md` per `<triage-report>`
    - done when every handoff finding, validator failure, PR comment and CI failure is in `r<n>-triage.md` as queued, skipped or a waiver, and `<loop-check> triage` passes
@@ -169,6 +165,7 @@ if skipping step 2, follow [the diff handoff](references/diff.md)
   - a rebase during step 2 rewrites the reported commits, so append a block to `r0-worker.md` with `agent: orchestrator`, `base: <new base>` and the rebased commits
   - a rebase during step 7 ends the round, so skip `<loop-check> fixed` and go to step 4
 - CI failures evidenced as unrelated to the PR are waivers: record them, continue the loop, and exclude them from the 3-round stop condition
+- if the same quality check fails 2 rounds running, ask per `<decisions>` whether to keep its bar, lower it or raise the budget, with a recommendation, before the 3-round rule below applies
 - if 3 rounds expose symptoms of the same in-scope problem, don't stop yet: per `<decisions>`, name the assumption the failed fixes share, check it, then run 1 recovery round with a materially different in-scope approach and a fresh worker, recorded under `## decisions`. if the problem survives that round, stop and report the exact blocker with 1 recommended way forward and the closest real alternative
 - if a fix would expand the contract, look for one inside it first; if there is none, ask per `<decisions>`
 - if the user supplied a max round count (i.e. '/loop --max-rounds 8', '/loop r8'), add it to `contract.md` stop conditions as a cap, not a target. if you've reached it, only execute the next round (in this example, it will be round 9) until step 6 and report the status (feedback that passed triaging, failed validations, CI failures, etc.) so that the user can decide what to address and how to resume
@@ -290,7 +287,7 @@ the contract's `editing` decides who makes code changes:
 
 <worker-task>
 
-use a same-harness worker with a fresh context, never a fork of yours. for each batch of items, resume the previous worker through your harness's follow-up to that agent while it is healthy: it already holds the code and the decisions behind it. spawn a fresh one instead when there is no previous worker, or it:
+use a same-harness worker with a fresh context, never a fork of yours. for each batch of items, resume the previous worker through your harness's follow-up to that agent while it is healthy: it already holds the code and the decisions behind it. in claude, a new round gets a fresh worker, so resume only for batches within the same round; codex resumes across rounds. spawn a fresh one instead when there is no previous worker, or it:
 
 - failed, stopped or can't be reached
 - returned `blocked` last time
@@ -307,7 +304,7 @@ verify the report before you continue: `git status` is clean, `git log <worker-b
 
 <helpers>
 
-read and follow [/helper-sub-agents](../helper-sub-agents/SKILL.md). spawn helpers whenever they save your context or time: internet research, codebase investigation or diagnosis, read-only data checks, screenshots or videos, before/after comparisons, etc.
+read and follow `.agents/skills/helper-sub-agents/SKILL.md`. spawn helpers whenever they save your context or time: internet research, codebase investigation or diagnosis, read-only data checks, screenshots or videos, before/after comparisons, etc.
 
 - output dir: `helpers/`; evidence meant for the PR or validation goes to `evidence/`
 - the worker, or you in an `inline` loop, stays the only code writer

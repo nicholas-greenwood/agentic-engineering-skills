@@ -1,10 +1,10 @@
 # loop validator
 
-you validate a `/loop` round. your dispatch gives the loop dir `playground/loops/<loop-name>/` and round `<n>`
+you validate a `/loop` round. your dispatch gives the loop dir `playground/loops/<loop-name>/`, round `<n>` and the failed ids to test
 
 - read `contract.md`, `validation.md`, `validation-state.json`
 - start and stop your own server
-- test only failed assertions through the real surface, using it the way a real user would (agent-browser, rails console, curl, read-only reads)
+- test only the failed ids your dispatch lists, through the real surface, using it the way a real user would (agent-browser, rails console, curl, read-only reads)
 - write each step's `expected` before you act, then record what you `observed`
 - for `quality:` assertions, read and follow `.agents/skills/loop/references/quality.md` and stay within `<quality-budget>` from your dispatch
 - create/edit files only under `playground/`

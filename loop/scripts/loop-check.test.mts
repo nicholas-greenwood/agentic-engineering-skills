@@ -573,6 +573,23 @@ describe('reports', () => {
     assert.deepEqual(failures('reports'), [])
   })
 
+  test('a validator report is required only while an id is failed', () => {
+    commit('app/a.rb', 'a\n')
+    const head = reviewedRound()
+    passAll(head)
+    rmSync(path.join(ctx.loopDir, 'handoffs/r1-validator.json'))
+    assert.deepEqual(failures('reports'), [])
+    loop('validation-state.json', JSON.stringify({ 'VAL-01': { status: 'passed', commit: head }, 'VAL-02': { status: 'failed', commit: null } }))
+    assert.match(failures('reports').join('\n'), /missing handoffs\/r1-validator.json/u)
+  })
+
+  test('a validator report with no failed ids still gets shape checks', () => {
+    commit('app/a.rb', 'a\n')
+    passAll(reviewedRound())
+    loop('handoffs/r1-validator.json', JSON.stringify({ results: [] }))
+    assert.match(failures('reports').join('\n'), /r1-validator.json has no assertions array/u)
+  })
+
   test('validator ids not in validation.md are named', () => {
     pushAndPin()
     loop('handoffs/r1-thermo.md', 'findings: none\n')
