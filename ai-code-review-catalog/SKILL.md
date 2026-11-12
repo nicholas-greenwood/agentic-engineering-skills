@@ -7,7 +7,7 @@ disable-model-invocation: true
 <reviewers>
 
 - `/cross-harness-sub-agent` with a short broad review prompt written by the main agent
-- native sub-agent reading and following [/thermo-nuclear-code-quality-review](../thermo-nuclear-code-quality-review/SKILL.md)
+- native sub-agent reading and following `.agents/skills/thermo-nuclear-code-quality-review/SKILL.md`
 - native sub-agent using `prompts/ponytail-review.md`
 - native sub-agent using `prompts/code-review.md`
 - harness's native code review agent
@@ -30,7 +30,7 @@ disable-model-invocation: true
 - code review prompt: `prompts/code-review.md`
 - ponytail review prompt: `prompts/ponytail-review.md`
 - bug-class review prompt: `prompts/bug-class-review.md`
-- data leak review prompt: [/data-leak-review](../data-leak-review/SKILL.md)
+- data leak review prompt: `.agents/skills/data-leak-review/SKILL.md`
 
 </prompts>
 
