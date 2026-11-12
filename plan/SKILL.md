@@ -16,11 +16,11 @@ before writing:
 - explore the repo first
 - eliminate uncertainty by verifying (rails runner, prod reads, repro), then record the conclusion, not the investigation
 - sketch the seams the work will be tested at (`/codebase-design` vocabulary): prefer existing seams; place new ones at the highest point possible; the fewer seams, the better - the ideal number is 1. a new seam is unresolved-question material
-- use the domain vocabulary from `GLOSSARY.md`
+- use the domain vocabulary from the glossaries in `GLOSSARY-MAP.md`
 
 helpers and prototypes:
 
-- read and follow [/helper-sub-agents](../helper-sub-agents/SKILL.md), with output under `playground/plans/<slug>/helpers/` and at most 5 at once. spawn helpers wherever they save your context or time, e.g. research, reading, data analysis, prototypes. do small things yourself when spawning would cost more than it saves
+- read and follow `.agents/skills/helper-sub-agents/SKILL.md`, with output under `playground/plans/<slug>/helpers/` and at most 5 at once. spawn helpers wherever they save your context or time, e.g. research, reading, data analysis, prototypes. do small things yourself when spawning would cost more than it saves
 - prototype proactively wherever trying something answers a question the plan depends on better than reading can, e.g. a backend flow, a library install, a state model
 - each prototype gets its own helper in its own worktree. that helper is the exception that commits and pushes, to its own throwaway branch only. link the branch from the plan next to the decision it settled
 - multi-variant UI prototypes (the UI branch of `/prototype`) only when the user asks
@@ -67,7 +67,7 @@ PRs:
 linear plans (default):
 
 - 1 backlog issue carries the whole plan, even when it has multiple PRs
-- use [linear-project-map](../linear-project-map/SKILL.md) to select and verify exactly 1 project and any applicable request and group-company labels before creating the issue
+- use `.agents/skills/linear-project-map/SKILL.md` to select and verify exactly 1 project and any applicable request and group-company labels before creating the issue
 - create the issue with only these fields: `team` (the workspace team), `title` = the plan title, `description` = the plan with the `# [title]` heading removed, `state: "Backlog"`, `assignee` = the current user, `project` = the selected project id, `labels` = the applicable verified labels when present
 - if a user provided a relevant issue, add `relatedTo` = the user-provided issues, and their sub-issues, that the plan delivers any part of. don't search linear for related issues
 - no cycle or parent
