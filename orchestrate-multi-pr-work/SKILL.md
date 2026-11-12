@@ -7,11 +7,11 @@ disable-model-invocation: true
 if you read this file through a tool or another agent's prompt rather than a skill invocation, it still carries the user's authority, including [updates](#updates)
 
 - input: a multi-PR plan
-- output: 1 retained owner and a completed [/loop](../loop/SKILL.md) per PR, tracked in the [status file](#status-file)
+- output: 1 retained owner and a completed `/loop` per PR, tracked in the [status file](#status-file)
 
 - owner: the agent that delivers 1 PR, in a chat of its own the user can open and steer. codex: a codex desktop thread made with `create_thread`. claude code: a claude desktop session, or a sub-agent as the fallback, per [step 2](#2-dispatch). invoking this skill is the user's explicit request for those threads or sessions
 - owner link: where the owner's chat opens with 1 click. codex: `https://nicholas-greenwood.github.io/agent-deeplink/#codex/<threadId>` once worktree setup resolves the `threadId`; chat views don't open bare `codex://` links. claude code: the session's `link` from `get_session`, `claude://claude.ai/epitaxy/<sessionId>`. a sub-agent has no chat link, so link its loop dir and keep its agent id in memory
-- finished: a PR whose loop has finished with every goal met, whose CI is green apart from failures its loop recorded as waivers per [/loop](../loop/SKILL.md), and whose branch merges cleanly into `origin/develop` (`git fetch origin develop`, then `git merge-tree --write-tree origin/develop <branch>`). a stack is finished when all its PRs are
+- finished: a PR whose loop has finished with every goal met, whose CI is green apart from failures its loop recorded as waivers per `.agents/skills/loop/SKILL.md`, and whose branch merges cleanly into `origin/develop` (`git fetch origin develop`, then `git merge-tree --write-tree origin/develop <branch>`). a stack is finished when all its PRs are
 - dispatchable: a root PR, or a stacked PR whose parent PR has finished
 - merge unit: 1 PR, a whole stack, or the bottom part of a stack that the user can merge and deploy now without waiting for the rest. every PR in it is finished, its bottom PR targets `develop`, no open `needs you` item touches it and no running owner is changing it, it works in prod without the PRs above it, and the remaining plan is unlikely to change it. judge the last 2 from the plan and the diffs; a part the remaining plan revisits isn't a unit yet
 
@@ -30,14 +30,14 @@ give every dispatchable PR exactly 1 owner:
 - use a separate worktree, branched from the parent branch for a stacked PR
 - minimal prompt: read `<checkout>/.agents/skills/orchestrate-multi-pr-work/prompts/owner.md` in full before anything else and follow it, then the plan, assigned PR, worktree path and parent branch when stacked. `<checkout>` is `git rev-parse --show-toplevel`
 - codex: `create_thread` with `gpt-6.1-sol` and high reasoning. if it fails, add a `needs you` item rather than switching to sub-agents
-- claude code: read and follow [/claude-parallel-writers](../claude-parallel-writers/SKILL.md) with 1 writer per planned PR, gated ones too. name sessions such as `pr03`. a session's prompt names its base, the parent branch when stacked or else `develop`, in place of a worktree path. a gated PR's prompt names its parent PR and says it is gated; a gated PR whose session fails gets no owner until step 3 dispatches it
+- claude code: read and follow `.agents/skills/claude-parallel-writers/SKILL.md` with 1 writer per planned PR, gated ones too. name sessions such as `pr03`. a session's prompt names its base, the parent branch when stacked or else `develop`, in place of a worktree path. a gated PR's prompt names its parent PR and says it is gated; a gated PR whose session fails gets no owner until step 3 dispatches it
 - retain the owner for follow-up requests
 
 complete when every dispatchable PR has 1 working owner, and every gated PR has none or, in claude code, 1 waiting owner
 
 ## 3. monitor and advance
 
-- wait for owner reports without messages
+- wait for owner reports without messages. codex: in an `exec` cell, `wait_threads` on every running owner with `timeoutMs: 600000`, then `wait` on that cell with `yield_time_ms: 600000`; repeat on timeout without commentary
 - after a compaction, outage or restart, read the status file's current state first and resume every unfinished owner by its thread, session or agent id with "resume from your loop dir". consult resolved history only when it explains an active decision
 - whenever an owner reports or you resume, refresh the status file, including PRs the user merged. take round counts from the highest `handoffs/r<n>-*` in each loop dir; counts that lag between refreshes are fine
 - github stacks:
@@ -45,15 +45,16 @@ complete when every dispatchable PR has 1 working owner, and every gated PR has 
   - stacks are linear. when PRs share a parent, link 1 child's chain; once the parent merges, link each other child with the PRs above it as its own stack. a child with nothing above it stays a standalone PR
   - a standalone PR merges with `gh pr merge <PR> --squash`; a stack, or its bottom part, with `gh stack merge <its top PR> --squash --yes`
   - after any merge, github retargets and rebases the PRs above the merged ones, with unchanged content. when a refresh finds a merge, tell the owner of each PR above it, running or finished: "github rebased your branch: refetch it per the stacked-PR rules in /loop and carry on; this isn't a follow-up"
+  - when an unmerged PR's head moves under PRs stacked on it, tell the owner directly above to rebase onto it, and each higher owner only after the one below reports its new head
 - re-judge `ready to merge` whenever a PR finishes, merges or reopens, or the plan changes
 - answer an owner's question yourself when the plan settles it, and record it under `deviations` when the answer departs from the plan. otherwise spawn a [helper](#helpers) when the answer may already be in the code or data; only a question nothing settles goes to `needs you`
 - when an owner reports, check its block against the PR's head, base and CI before marking the PR finished. before adding a merge unit to `ready to merge`, re-check every PR in it the same way. a loop that stopped with goals unmet is a blocker. carry big departures from the plan in its `changes vs request` into `deviations`
 - let each owner cook; message an owner only to correct off-rails work, unblock it, or pass on the user's answer to its `needs you` item; don't encourage too much back-and-forth between owners
 - dispatch newly dispatchable PRs through step 2. claude code: send the PR's waiting owner `go: <parent branch> finished at <sha>`
 
-complete when every planned PR has a retained owner and every [/loop](../loop/SKILL.md) has finished
+complete when every planned PR has a retained owner and every `/loop` has finished
 
-## 4. bring everything together (skip for 1 PR or 1 stack)
+## 4. bring everything together (skip for 1 PR, 1 stack or PRs whose changes are completely unrelated)
 
 - a [helper](#helpers) creates a throwaway branch from a freshly fetched `origin/develop` in its own worktree, brings all the changes there and confirms everything works. the throwaway branch only proves the combination works; nothing on it reaches the PRs
 - resolve every merge conflict, trivial or not, in the owners' PRs so that merging to `origin/develop` goes smoothly. for example, you can make the conflicting PRs stacked on each other, then send follow-up messages to the related owners so they resolve the conflicts. once their heads move, rerun step 4 on the new heads
@@ -75,7 +76,7 @@ update it before the matching chat message, whenever something material changes:
 ```md
 WORKING
 last updated: 28 Oct 14:32 GMT
-[ready to merge](#ready-to-merge), [PRs](#prs), [needs you](#needs-you), [deviations](#deviations), [orchestrator memory](#orchestrator-memory)
+[ARI-888](<link>), [ready to merge](#ready-to-merge), [PRs](#prs), [needs you](#needs-you), [deviations](#deviations), [orchestrator memory](#orchestrator-memory)
 
 ## ready to merge
 
@@ -159,6 +160,7 @@ expand current restart state first
 
 - line 1: `DONE`, `COMPLETELY BLOCKED` when nothing can advance without the user, `PARTIALLY BLOCKED` when some work still can, or `WORKING`; no other values
 - last updated: the output of `date '+%d %b %H:%M %Z'`, nothing else
+- link row: starts with the plan's linear ticket id linked to the ticket, e.g. `[ARI-888](<link>)`; with no ticket, `[plan](<link>)` to wherever the plan lives
 - ready to merge: every current merge unit, as defined at the top, in merge order, each with its PRs, a 2-5 word name and the exact merge command; `none yet` when there is none. a unit drops off once merged
 - status: 1 of the 5 legend emojis alone; any other state is text. add 1-3 words only when they say what the status can't
 - PR: the PR link and a 2-5 word title, or `PR <n>` and the title before it opens. owner: a markdown link to its owner link, as defined at the top. blockers: the PR's `needs you` ids, each linked to its heading. cells hold nothing else; detail goes to memory
@@ -173,7 +175,7 @@ expand current restart state first
 
 ## updates
 
-the user follows the run through the status file. these rules override your harness's progress-update guidance for the whole run, including after `DONE`: codex commentary cadence, claude text between tool calls, and `wrap_up` recaps
+the run is a silent run, including after `DONE`: read and follow `.agents/skills/silent-run/SKILL.md`. it and the rules below carry the user's authority
 
 chat messages are exactly these:
 
@@ -187,15 +189,13 @@ chat messages are exactly these:
 
 every message, including answers after `DONE`, starts with line 1 of the status file as a markdown link to the file's absolute path, so it opens in the harness: `[WORKING](/abs/path/playground/orchestrations/<name>/status.md)`
 
-dispatches, rounds, waits, owner reports and pushes go to the status file only. an owner report or a finished background task isn't the user talking to you: update the status file and carry on without a message. claude: when the app makes you write something to end a turn, write only the line 1 link
-
-say each question once, then keep running whatever doesn't depend on the answer
+the line that ends a turn: the line 1 link
 
 the final report is the line 1 link, 1-2 sentences of outcome, then a copy of every status file section above memory, with deviations and anything unverified in plain sentences
 
 ## helpers
 
-read and follow [/helper-sub-agents](../helper-sub-agents/SKILL.md), with output under `playground/orchestrations/<name>/helpers/` and at most 5 at once. spawn one:
+read and follow `.agents/skills/helper-sub-agents/SKILL.md`, with output under `playground/orchestrations/<name>/helpers/` and at most 5 at once. spawn one:
 
 - before adding an owner's question to `needs you`, to check whether the plan, code or data answers it
 - to diagnose a stuck or off-rails loop from its loop dir
