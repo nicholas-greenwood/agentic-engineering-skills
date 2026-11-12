@@ -26,7 +26,7 @@ every count below is a cap, not a target: a clean area earns a short report
    - type safety (6)
    - robustness (6): failure modes handled badly or not at all: swallowed errors, races, retries without idempotency, silent data loss, tenant scoping gaps
    - tests (6): judge the area's tests by `/tdd`'s good test and anti-patterns. propose deleting or rewriting tests that mock what they test, pin internals or can't fail, and the seam and fake that let a few behaviour tests pin today's behaviour before the risky points land. spend up to 3 mutation probes on the "can't catch it" claims that decide a deletion, all in 1 `bin/wt-run <map SHA>` worktree, then remove it with `git worktree remove --force <path>`, since `bin/wt-run` keeps it. every deleted test names the assertion that replaces it, or why none is needed
-   - architecture (4): read and follow [/improve-codebase-architecture](../improve-codebase-architecture/SKILL.md) through its explore step, exploring directly in place of its nested sub-agent and applying the deletion test as `/codebase-design` words it, and return its candidates in the point format in place of the HTML report and grilling loop. it keeps interface testability and leaves the quality of existing tests to the tests lens
+   - architecture (4): read and follow `.agents/skills/improve-codebase-architecture/SKILL.md` through its explore step, exploring directly in place of its nested sub-agent and applying the deletion test as `/codebase-design` words it, and return its candidates in the point format in place of the HTML report and grilling loop. it keeps interface testability and leaves the quality of existing tests to the tests lens
 
    done when all 5 have returned
 
