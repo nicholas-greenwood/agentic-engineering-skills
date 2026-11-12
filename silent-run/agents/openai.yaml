@@ -1,0 +1,5 @@
+interface:
+  display_name: "Silent run"
+  short_description: "Chat rules for /loop and /orchestrate-multi-pr-work runs"
+policy:
+  allow_implicit_invocation: false
