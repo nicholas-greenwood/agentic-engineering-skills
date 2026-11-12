@@ -33,10 +33,10 @@ modes:
 3. dispatch each non-empty group
    - create 1 task per group in its own worktree; this skill is the authorisation to spawn them
    - codex: `create_thread` with a worktree environment, `gpt-6.1-sol` with high reasoning. `clientThreadId` means setup is queued and completes dispatch; retain it and resolve the task when setup finishes, with no retry or fallback for that group
-   - claude code: read and follow [/claude-parallel-writers](../claude-parallel-writers/SKILL.md) with 1 writer per group. its fallback order replaces the retry and blocking rule below: a group blocks only after every fallback fails
+   - claude code: read and follow `.agents/skills/claude-parallel-writers/SKILL.md` with 1 writer per group. its fallback order replaces the retry and blocking rule below: a group blocks only after every fallback fails
    - retain the task for follow-up requests
    - after a creation error, reconcile the task list, `git worktree list`, branches, and PRs. retry once only after a definitive failure that left no task, PR, commits, or worktree or branch besides the one you created for the dispatch, which the retry reuses; any other failure, a failed retry, or an unknown outcome blocks the group
-   - prompt it with the group, the mode, the exact list as current -> desired version, `worker.md`, the branch file, instructions to read and follow [/loop](../loop/SKILL.md), `bash bin/ensure-environment`, base branch `develop`, "never merge", "own only your branch and PR", and "return the full result plus token-efficient verification commands"
+   - prompt it with the group, the mode, the exact list as current -> desired version, `worker.md`, the branch file, instructions to read and follow `.agents/skills/loop/SKILL.md`, `bash bin/ensure-environment`, base branch `develop`, "never merge", "own only your branch and PR", and "return the full result plus token-efficient verification commands"
    - never include a major-only dependency outside `major` mode
    - run tasks in parallel
 
