@@ -35,12 +35,14 @@ notes:
 
 ## description
 
-- keep it short and skimmable, using UK english and ASD-STE100 simplified technical english; use `GLOSSARY.md` for domain terms when needed
+- keep it short and skimmable, using UK english and ASD-STE100 simplified technical english; use the glossaries in `GLOSSARY-MAP.md` for domain terms when needed
 - write 1-3 short summary bullets; combine related points to stay within 3
 - keep prose at most 150 words by default, excluding headings, diagrams, image links, and contributors; small changes need less
 - add detail beyond this only for a material risk, recovery step, or rollout requirement a reviewer needs to decide whether to merge
 - give each fact 1 home; keep implementation detail or unchanged behaviour only when it explains the change, a tradeoff, or rollback
 - describe the final diff for a reviewer without the chat history
+- when there is a linear ticket, put 1 standalone markdown link labelled with its ticket ID above the final `contributors:` line; omit it when there is no ticket
+- link to the ticket only, omit per-ticket PR numbering or attribution such as `PR 4/4 of` and stacked PR links
 - choose changed-file links using [file links](#file-links); prefer whole-file diff links for an overview and line/range links for a specific review point
 - keep review links inside the PR; show unchanged files as code paths, and refresh affected links after file renames or line changes
 
@@ -64,6 +66,10 @@ visual verification:
 | before | after |
 | --- | --- |
 | ![before](<uploaded URL>) | ![after](<uploaded URL>) |
+
+[<linear ticket ID>](<linear ticket URL>)
+
+contributors: <agent thread links>
 ```
 
 ### file links
