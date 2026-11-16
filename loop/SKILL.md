@@ -40,8 +40,8 @@ THE LOOP HAS FINISHED 🎉
 ## what changed
 - <1 bullet per behaviour or code change, in plain words>
 
-## evidence
-- <what was checked, how, and the result, linking screenshots or videos>
+## validation
+- <what was checked>; <how>; <links to screenshots, videos or output>
 - <quality checks, if any: verdict, spend, and whether the budget ran out with the validator's confidence>
 
 ## changes vs your request
@@ -55,6 +55,8 @@ THE LOOP HAS FINISHED 🎉
 ## worth a second look
 - <skips, side findings with evidence, anything unverified, or none>
 ```
+
+order `## validation` by what the user likely cares about most, and prefer outcomes over mechanisms where there is one: "a user without access sees the forbidden page and none of its data", not "HTML gap returns 403"
 
 the first line is exactly `THE LOOP HAS FINISHED 🎉`, or `THE LOOP HAS STOPPED` at a stop condition, whose outcome then names the stop. keep every `changes vs your request` line, writing `none` when it is empty, and compare against `request.md`, not the latest contract. when step 2 was skipped, `what changed` covers what the loop changed in the code it started from
 
