@@ -38,7 +38,7 @@ native sub-agent model routing:
 
 | harness     | model                       | reasoning                   |
 | ----------- | --------------------------- | --------------------------- |
-| codex       | gpt-6.1-sol                 | high                       |
+| codex       | gpt-6.2-sol                 | high                       |
 | claude code | claude-opus-5-5              | high                        |
 | other       | what the harness recommends | what the harness recommends |
 
