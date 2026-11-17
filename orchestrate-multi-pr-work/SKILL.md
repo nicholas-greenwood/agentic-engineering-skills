@@ -29,7 +29,7 @@ give every dispatchable PR exactly 1 owner:
 
 - use a separate worktree, branched from the parent branch for a stacked PR
 - minimal prompt: read `<checkout>/.agents/skills/orchestrate-multi-pr-work/prompts/owner.md` in full before anything else and follow it, then the plan, assigned PR, worktree path and parent branch when stacked. `<checkout>` is `git rev-parse --show-toplevel`
-- codex: `create_thread` with `gpt-6.1-sol` and high reasoning. if it fails, add a `needs you` item rather than switching to sub-agents
+- codex: `create_thread` with `gpt-6.2-sol` and high reasoning. if it fails, add a `needs you` item rather than switching to sub-agents
 - claude code: read and follow `.agents/skills/claude-parallel-writers/SKILL.md` with 1 writer per planned PR, gated ones too. name sessions such as `pr03`. a session's prompt names its base, the parent branch when stacked or else `develop`, in place of a worktree path. a gated PR's prompt names its parent PR and says it is gated; a gated PR whose session fails gets no owner until step 3 dispatches it
 - retain the owner for follow-up requests
 
