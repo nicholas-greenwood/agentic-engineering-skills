@@ -32,7 +32,7 @@ modes:
 
 3. dispatch each non-empty group
    - create 1 task per group in its own worktree; this skill is the authorisation to spawn them
-   - codex: `create_thread` with a worktree environment, `gpt-6.1-sol` with high reasoning. `clientThreadId` means setup is queued and completes dispatch; retain it and resolve the task when setup finishes, with no retry or fallback for that group
+   - codex: `create_thread` with a worktree environment, `gpt-6.2-sol` with high reasoning. `clientThreadId` means setup is queued and completes dispatch; retain it and resolve the task when setup finishes, with no retry or fallback for that group
    - claude code: read and follow `.agents/skills/claude-parallel-writers/SKILL.md` with 1 writer per group. its fallback order replaces the retry and blocking rule below: a group blocks only after every fallback fails
    - retain the task for follow-up requests
    - after a creation error, reconcile the task list, `git worktree list`, branches, and PRs. retry once only after a definitive failure that left no task, PR, commits, or worktree or branch besides the one you created for the dispatch, which the retry reuses; any other failure, a failed retry, or an unknown outcome blocks the group
