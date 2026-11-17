@@ -7,7 +7,7 @@ choose a fresh caller-selected `<output-path>` for every start or resume attempt
 set `<sandbox>` to the literal `read-only` when edits are forbidden or `workspace-write` when allowed:
 
 ```bash
-codex -C "<checkout>" --sandbox <sandbox> --model gpt-6.1-sol exec --ignore-user-config -c approval_policy='on-request' -c approvals_reviewer='auto_review' -c model_reasoning_effort='high' --output-last-message "<output-path>" "follow the task in <prompt-file>"
+codex -C "<checkout>" --sandbox <sandbox> --model gpt-6.2-sol exec --ignore-user-config -c approval_policy='on-request' -c approvals_reviewer='auto_review' -c model_reasoning_effort='high' --output-last-message "<output-path>" "follow the task in <prompt-file>"
 ```
 
 `--ignore-user-config` keeps authentication and repository `AGENTS.md` while ignoring personal `config.toml`
@@ -21,7 +21,7 @@ never add full-access flags
 `--ignore-user-config` also drops the `computer-use` MCP server, which only the codex desktop app turns on. when the task needs to click in apps or chrome, start with its 2 overrides and add them to every follow-up too:
 
 ```bash
-codex -C "<checkout>" --sandbox <sandbox> --model gpt-6.1-sol exec --ignore-user-config -c approval_policy='on-request' -c approvals_reviewer='auto_review' -c model_reasoning_effort='high' -c "mcp_servers.computer-use.command=\"$HOME/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient\"" -c 'mcp_servers.computer-use.args=["mcp"]' --output-last-message "<output-path>" "follow the task in <prompt-file>"
+codex -C "<checkout>" --sandbox <sandbox> --model gpt-6.2-sol exec --ignore-user-config -c approval_policy='on-request' -c approvals_reviewer='auto_review' -c model_reasoning_effort='high' -c "mcp_servers.computer-use.command=\"$HOME/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient\"" -c 'mcp_servers.computer-use.args=["mcp"]' --output-last-message "<output-path>" "follow the task in <prompt-file>"
 ```
 
 ## follow up
@@ -29,7 +29,7 @@ codex -C "<checkout>" --sandbox <sandbox> --model gpt-6.1-sol exec --ignore-user
 rewrite `<prompt-file>` with the exact follow-up, choose another fresh `<output-path>`, then resume with the same sandbox and successful-exit gate:
 
 ```bash
-codex -C "<checkout>" --sandbox <sandbox> --model gpt-6.1-sol exec resume <codex-session-id> --ignore-user-config -c approval_policy='on-request' -c approvals_reviewer='auto_review' -c model_reasoning_effort='high' --output-last-message "<output-path>" "follow the task in <prompt-file>"
+codex -C "<checkout>" --sandbox <sandbox> --model gpt-6.2-sol exec resume <codex-session-id> --ignore-user-config -c approval_policy='on-request' -c approvals_reviewer='auto_review' -c model_reasoning_effort='high' --output-last-message "<output-path>" "follow the task in <prompt-file>"
 ```
 
 replace the shown model or effort when the user explicitly requests another value
