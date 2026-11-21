@@ -31,7 +31,7 @@ coupled family: a gem and its runtime, its plugins or adapters, its `*-rails` wr
 
 ## worker
 
-- skills: `/backend`, `/rails-*`, and `/tdd` when call sites change
+- skills: `/backend`, `/rails-*`, and `/tests` when call sites change
 - lockfile recipe: `bundle update --conservative <gems>`; when `--conservative` cannot resolve, drop it for that gem only and list every transitive gem that moved. `BUNDLED WITH` stays at its ceiling; the runtime group owns changes to `RUBY VERSION`
 - `runtime`: review release notes for intermediate ruby minors, synchronise `.mise.toml`, `.ruby-version`, the Gemfile/lockfile runtime declarations, and related CI/deploy references and version fixtures; reinstall native gems and run the backend checks under the target ruby. preserve exact pins after upgrading
 - after every lockfile change run `bundle exec tapioca gems` then `bash bin/tapioca-dsl-ci`, and commit `sorbet/rbi/` together with `Gemfile.lock`. for the sorbet gems themselves `tapioca gems` is a no-op; the evidence is a baseline-vs-upgraded `srb tc` diff

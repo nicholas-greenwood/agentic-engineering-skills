@@ -27,7 +27,7 @@ for `runtime`, run the frontend checks and build under the target node version; 
 
 ## worker
 
-- skills: `/frontend`, `$ai-sdk` for `ai-sdk`, and `/tdd` when call sites change
+- skills: `/frontend`, `$ai-sdk` for `ai-sdk`, and `/tests` when call sites change
 - lockfile recipe: bump the manifest, then `pnpm install`; list every transitive package that moved
 - verify peer dependencies, engines, and types on install
 - `runtime`: synchronise the node pin in `.mise.toml`, `package.json` engines, and CI/deploy runtime references; update `@types/node` within the node ceiling and pnpm only when dispatched. preserve exact pins after upgrading and review runtime release notes before changing them
