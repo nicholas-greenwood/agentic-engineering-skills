@@ -30,7 +30,10 @@ disable-model-invocation: true
 - code review prompt: `prompts/code-review.md`
 - ponytail review prompt: `prompts/ponytail-review.md`
 - bug-class review prompt: `prompts/bug-class-review.md`
+- reachability and indirection checks: `prompts/reachability-and-indirection.md`
 - data leak review prompt: `.agents/skills/data-leak-review/SKILL.md`
+
+for standalone reviews that use the shared reporting bar, supply it from `.github/codex/prompts/shared-review.md`
 
 </prompts>
 

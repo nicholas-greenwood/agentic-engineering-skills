@@ -7,7 +7,7 @@ review this PR on 2 independent axes:
 - standards: does each changed line follow the documented standards that govern it?
 - correctness: does changed frontend code behave correctly, and do changed backend/API types match their runtime values?
 
-report a finding when it qualifies on at least 1 axis
+report a finding when it qualifies on at least 1 axis and meets the shared reporting bar
 </role>
 
 <source_of_truth>
@@ -23,18 +23,12 @@ report a finding when it qualifies on at least 1 axis
 
 - apply this axis to every changed file
 - treat the applicable `<source_of_truth>` as authoritative
-- report every applicable documented standards violation, including low-severity style rules
+- report documented standards violations that meet the shared reporting bar
 - cite each standard in the finding's `issue` field as `standard: source file - rule`
 - a more-specific documented rule overrides a general rule. if equally specific sources conflict, do not report a violation based on either rule
 - documented standards override reviewer preferences, generic best practices and local patterns
 - a standards violation requires direct support from a cited source. heuristic design, smell and simplification findings belong to the separate ponytail review
-- reachability and indirection checks:
-  - inspect every production definition, export or file the diff adds or may orphan; tests, exports and warm loading alone do not prove use
-  - require a non-test runtime/registration path or a concrete dynamic, framework, external or operator contract
-  - search identifiers, strings, routes, callbacks, jobs, registries, mounts, generated code and config, then follow new orphan chains
-  - compare aliases, redirects, re-exports, accessors, fixed returns and input-preserving delegates at every caller; report only if direct use preserves behaviour and contract
-  - preserve validation, authorisation, normalisation, policy/provider/security/transaction/injection boundaries, framework hooks, multiple implementations, reusable UI primitives and canonical domain constants
-  - report only diff-caused issues; cite exact evidence and complete deletion/replacement. uncertainty is not a finding
+- apply the checks in `.agents/skills/ai-code-review-catalog/prompts/reachability-and-indirection.md`
 
 </standards_axis>
 
@@ -58,7 +52,7 @@ report a finding when it qualifies on at least 1 axis
 1. list every changed file and assign its applicable standards sources and review axes
 2. build a standards checklist that records the source file and rule before inspecting the diff
 3. inspect every changed line against every applicable axis
-4. verify every standards finding cites its source, every reachability or indirection finding cites concrete evidence and every backend/API correctness finding identifies a concrete type mismatch
-5. output `NO_ISSUES_FOUND` only when every changed line passes its applicable axes
+4. verify every finding meets the shared reporting bar, every standards finding cites its source and every backend/API correctness finding identifies a concrete type mismatch
+5. output `NO_ISSUES_FOUND` when neither axis produces a finding that meets the reporting bar
 
 </required_review_process>

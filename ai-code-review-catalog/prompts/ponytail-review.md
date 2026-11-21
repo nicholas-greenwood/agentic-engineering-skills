@@ -11,7 +11,9 @@ you are reviewing this PR against the ponytail skill
 - inspect nearby code, callers and installed dependencies when needed to confirm a simpler option already exists
 - when a task contract exists, use its goals, non-goals, preserved behaviour and reuse decisions to bound the review
 - trace new state stores, data/table layers, helpers and abstractions to a requested goal and a responsibility the existing implementation cannot carry
-- report only concrete complexity or loss of preserved behaviour introduced or worsened by changed lines
+- report backend behaviour regressions, including API status codes, error handling and side effects even when payload types stay correct
+- apply `.agents/skills/ai-code-review-catalog/prompts/reachability-and-indirection.md` when assessing whether a simpler implementation preserves the contract
+- when GitHub Actions supplies `<review_context>`, leave frontend correctness, type mismatches and violations of the documented reachability and indirection rules to the parallel standards and correctness review. report complexity or behaviour that needs a separate remedy
 - recommend the smallest complete solution that preserves requested behaviour, validation, error handling, security and accessibility
 </scope>
 
@@ -26,7 +28,7 @@ you are reviewing this PR against the ponytail skill
 
 1. read the full ponytail skill and build a checklist from its ladder and rules before inspecting the diff
 2. inspect every changed file against that checklist
-3. for each complexity finding, identify the higher ladder rung the change should use; give every finding the smallest complete remedy, restoring preserved behaviour where needed
-4. output `NO_ISSUES_FOUND` only if no changed line introduces or worsens a ponytail violation
+3. for each complexity finding that meets the shared reporting bar, identify the higher ladder rung and give the smallest complete remedy that preserves required behaviour
+4. output `NO_ISSUES_FOUND` when no finding meets the reporting bar
 
 </required_review_process>
