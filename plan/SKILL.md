@@ -137,7 +137,7 @@ x PRs
 ## testing decisions
 
 [the seam(s) the tests exercise, and prior art: similar tests in the codebase]
-[`/tdd` skill defines what makes a good test; routine coverage is assumed, record only the decisions]
+[`/tdd` defines what makes a good test and `/tests` the repo's seams and canonical examples; routine coverage is assumed, record only the decisions]
 
 ## PRs
 
