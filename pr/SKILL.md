@@ -45,6 +45,7 @@ notes:
 - link to the ticket only, omit per-ticket PR numbering or attribution such as `PR 4/4 of` and stacked PR links
 - choose changed-file links using [file links](#file-links); prefer whole-file diff links for an overview and line/range links for a specific review point
 - keep review links inside the PR; show unchanged files as code paths, and refresh affected links after file renames or line changes
+- `- db migrations:` text must be present - checked by ci
 
 use this body shape, omitting optional sections and replacing all placeholders:
 
