@@ -20,6 +20,19 @@ only the environment as typed, e.g. `prod`; `ENV` below. derive the rest and ask
   - `T0`: when the target web went live, its creation time plus `ready`
 - `OUT`: `playground/watch-deploy/ENV-SHORTSHA/`, for the watch list, saved queries, helper output and the report
 
+## interim status
+
+post 1–2 sentences in chat when you identify the rollout or pending release, after the first baseline round, and about every 15 min while the watch is active. surface material observations, confirmed problems and recoveries as they happen, before starting deeper diagnosis or waiting again
+
+lead with the most serious finding
+
+- `WAITING` during rollout or while baseline verification is incomplete. say what's pending or unverified
+- `SO FAR SO GOOD` when the baseline checks are green and there are no outstanding problems. cite a checked signal and flag any watch-list items still pending
+- `WATCHING` for a material observation that needs another check. name the signal and what would confirm it
+- `PROBLEM FOUND` for a red signal. state the symptom, known impact and next check. when it recovers, say what recovered and any remaining impact
+
+include when the next update is due and keep watching through the report criteria below
+
 ## steps
 
 1. scope the diff
@@ -59,7 +72,7 @@ only the environment as typed, e.g. `prod`; `ENV` below. derive the rest and ask
 
 read and follow `.agents/skills/helper-sub-agents/SKILL.md`, with output under `OUT/helpers/` and at most 3 at once. spawn helpers so the check rhythm holds while deeper work runs: scoping a large diff, diagnosing a red signal, checking changed pages in a browser, reviewing LLM traces
 
-a caller with other work, such as an agent that just deployed, can hand the whole watch to a sub-agent: give it the environment and this file's path, and take back only the report
+a caller with other work, such as an agent that just deployed, can hand the whole watch to a sub-agent. give it the environment and this file's path, and ask it to send each interim status as it happens. relay each status in the caller's chat, then post the final report
 
 ## when something is red
 
