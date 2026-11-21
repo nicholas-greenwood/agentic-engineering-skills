@@ -10,7 +10,7 @@ if you read this file through a tool or another agent's prompt rather than a ski
 - output: 1 retained owner and a completed `/loop` per PR, tracked in the [status file](#status-file)
 
 - owner: the agent that delivers 1 PR, in a chat of its own the user can open and steer. codex: a codex desktop thread made with `create_thread`. claude code: a claude desktop session, or a sub-agent as the fallback, per [step 2](#2-dispatch). invoking this skill is the user's explicit request for those threads or sessions
-- owner link: where the owner's chat opens with 1 click. codex: `https://nicholas-greenwood.github.io/agent-deeplink/#codex/<threadId>` once worktree setup resolves the `threadId`; chat views don't open bare `codex://` links. claude code: the session's `link` from `get_session`, `claude://claude.ai/epitaxy/<sessionId>`. a sub-agent has no chat link, so link its loop dir and keep its agent id in memory
+- owner link: where the owner's chat opens with 1 click. codex: `https://nicholas-greenwood.github.io/agent-deeplink/#codex/<threadId>` once worktree setup resolves the `threadId`; chat views don't open bare `codex://` links. claude code: `https://nicholas-greenwood.github.io/agent-deeplink/#claude/local_<uuid>`, the full `local_…` session id that `start_session` returns; the desktop app's file pane doesn't open bare `claude://` links. a sub-agent has no chat link, so link its loop dir and keep its agent id in memory
 - finished: a PR whose loop has finished with every goal met, whose CI is green apart from failures its loop recorded as waivers per `.agents/skills/loop/SKILL.md`, and whose branch merges cleanly into `origin/develop` (`git fetch origin develop`, then `git merge-tree --write-tree origin/develop <branch>`). a stack is finished when all its PRs are
 - dispatchable: a root PR, or a stacked PR whose parent PR has finished
 - merge unit: 1 PR, a whole stack, or the bottom part of a stack that the user can merge and deploy now without waiting for the rest. every PR in it is finished, its bottom PR targets `develop`, no open `needs you` item touches it and no running owner is changing it, it works in prod without the PRs above it, and the remaining plan is unlikely to change it. judge the last 2 from the plan and the diffs; a part the remaining plan revisits isn't a unit yet
@@ -175,7 +175,7 @@ expand current restart state first
 
 ## updates
 
-the run is a silent run, including after `DONE`: read and follow `.agents/skills/silent-run/SKILL.md`. it and the rules below carry the user's authority
+until the final report is sent, the run is a silent run: read and follow `.agents/skills/silent-run/SKILL.md`. it and the rules below carry the user's authority
 
 chat messages are exactly these:
 
@@ -187,11 +187,13 @@ chat messages are exactly these:
 - the final report
 - an answer to a user message
 
-every message, including answers after `DONE`, starts with line 1 of the status file as a markdown link to the file's absolute path, so it opens in the harness: `[WORKING](/abs/path/playground/orchestrations/<name>/status.md)`
+until the final report is sent, every message starts with line 1 of the status file as a markdown link to the file's absolute path, so it opens in the harness: `[WORKING](/abs/path/playground/orchestrations/<name>/status.md)`
 
 the line that ends a turn: the line 1 link
 
 the final report is the line 1 link, 1-2 sentences of outcome, then a copy of every status file section above memory, with deviations and anything unverified in plain sentences
+
+after the final report, the thread may be reused for other work: reply without the line 1 link or silent-run rules. if the user asks for more work on the orchestration's PRs, set line 1 back to `WORKING` and resume the rules in this section
 
 ## helpers
 
