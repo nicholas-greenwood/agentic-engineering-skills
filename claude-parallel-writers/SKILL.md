@@ -8,7 +8,7 @@ how a claude code orchestrator runs parallel writers, such as PR owners or depen
 
 - the app refuses `start_session` in any turn the user's own message didn't start, including turns a writer's message or note wakes. so start every writer your calling skill plans in the turn that invoked it
 - `start_session` with `initiation: "user_asked"`, `use_worktree: true` and a short `name`
-- a session's worktree can start from a stale local branch, so each prompt names the writer's base and tells it to reset its new branch to the freshly fetched base before it starts
+- a session's worktree can start from a stale local branch, so each prompt names the writer's base and tells it to run `git fetch origin <base>`, then `git switch -C <worktree-branch> origin/<base>`, where `<worktree-branch>` is the branch the app checked out in its worktree, before it starts
 - add your session id from `get_session` with `self` to each prompt, and tell the writer to send its result there with `SendMessage` before it ends its turn. the app's notes on writers' turns arrive only once every writer is idle and quote 400 characters, so read them as session status, never as results
 - follow up with `SendMessage` to the writer's `local_…` session id
 - for a writer that comes up later, or when `start_session` fails, use the first that works:
