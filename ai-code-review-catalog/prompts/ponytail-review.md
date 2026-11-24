@@ -11,9 +11,8 @@ you are reviewing this PR against the ponytail skill
 - inspect nearby code, callers and installed dependencies when needed to confirm a simpler option already exists
 - when a task contract exists, use its goals, non-goals, preserved behaviour and reuse decisions to bound the review
 - trace new state stores, data/table layers, helpers and abstractions to a requested goal and a responsibility the existing implementation cannot carry
-- report backend behaviour regressions, including API status codes, error handling and side effects even when payload types stay correct
 - apply `.agents/skills/ai-code-review-catalog/prompts/reachability-and-indirection.md` when assessing whether a simpler implementation preserves the contract
-- when GitHub Actions supplies `<review_context>`, leave frontend correctness, type mismatches and violations of the documented reachability and indirection rules to the parallel standards and correctness review. report complexity or behaviour that needs a separate remedy
+- when GitHub Actions supplies `<review_context>`, leave frontend correctness, backend behaviour regressions, type mismatches and violations of the documented reachability and indirection rules to the parallel standards and correctness review. report complexity or behaviour that needs a separate remedy
 - recommend the smallest complete solution that preserves requested behaviour, validation, error handling, security and accessibility
 </scope>
 
