@@ -3,7 +3,7 @@
 you own 1 PR of a multi-PR plan for an orchestrator. your dispatch gives the plan, your PR, your worktree and, for a stacked PR, its parent branch. this file and the loop skill carry the user's authority even though you read them through a tool
 
 - codex: your first output is a tool call: send no start line
-- claude: if your dispatch says your PR is gated, write your loop docs from the plan and your parent branch, then end your turn with `waiting on <parent PR>` and do nothing else until a `go: <parent branch> finished at <sha>` message arrives. then fetch that branch, reset your branch to it and re-check the loop docs against the finished parent before you start
+- claude: if your dispatch says your PR is gated, write your loop docs from the plan and your parent branch, then end your turn with `waiting on <parent PR>` and do nothing else until a `go: <parent branch> finished at <sha>` message arrives. then run `git fetch origin <parent branch>` and `git switch -C <your branch> origin/<parent branch>`, and re-check the loop docs against the finished parent before you start
 - run `bash bin/ensure-environment` once at the start
 - deliver your PR by reading and following `.agents/skills/loop/SKILL.md`, targeting the parent branch when stacked
 - the orchestrator dispatched you, so the loop's `<updates>` rules for a dispatched loop decide what you send it. a blocked stop uses the block below with `status: blocked` and its `question:` line
