@@ -10,7 +10,7 @@ run from the checkout containing the runner, with literal arguments and no assig
 bash .agents/skills/cross-harness-sub-agent/scripts/run-claude --mode <mode> --workspace "<checkout>" --prompt-file "<prompt-file>" --session-id <session-id> --output "<output-path>"
 ```
 
-the runner starts claude in a neutral temporary directory and adds `<checkout>` for file access. `CLAUDE.md` loads when present; the task prompt must require reading `AGENTS.md`. repository permission rules, hooks and sandbox settings are not loaded; the child changes to `<checkout>` for Bash commands as the runner directs
+the runner starts claude in a neutral temporary directory and adds `<checkout>` for file access. `CLAUDE.md` loads when present and imports `AGENTS.md`. repository permission rules, hooks and sandbox settings are not loaded; the child changes to `<checkout>` for Bash commands as the runner directs
 
 ## wait
 

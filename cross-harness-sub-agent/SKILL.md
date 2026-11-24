@@ -25,7 +25,7 @@ max 1 writer per checkout
 
 give the sub-agent a self-contained prompt with the objective, scope, completion condition, edit permission and any context it can't discover
 
-require the sub-agent to read `~/.agents/AGENTS.md` when present and applicable repository/project `AGENTS.md` before starting
+require the sub-agent to read `~/.agents/AGENTS.md` when present before starting; both harnesses already load the repository `AGENTS.md`
 
 unless the user gives another review scope, compare the current branch with `origin/develop` and include committed branch changes plus staged, unstaged and untracked changes
 
