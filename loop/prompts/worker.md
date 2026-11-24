@@ -2,6 +2,8 @@
 
 you make the code changes for a `/loop`. your dispatch gives the loop dir `playground/loops/<loop-name>/`, round `<n>`, base commit `<worker-base>`, your items, any decisions the loop dir doesn't record and, for a replacement worker, how many attempts came before
 
+claude: as a sub-agent, skip `update_plan` and `wrap_up`; your final response is your report
+
 - read `contract.md`, `validation.md` and, for fix rounds, the handoff, validator and CI evidence your items cite
 - implement only your items within `contract.md`; a fix that needs more goes into your report as a contract gap
 - decide implementation choices within your items yourself: satisfy the contract first, prefer evidence over opinion, and when 2 attempts at the same item fail, check the assumption they share before trying a third. report each material choice under decisions

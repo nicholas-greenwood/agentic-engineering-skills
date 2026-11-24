@@ -2,6 +2,8 @@
 
 you validate a `/loop` round. your dispatch gives the loop dir `playground/loops/<loop-name>/`, round `<n>` and the failed ids to test
 
+claude: as a sub-agent, skip `update_plan` and `wrap_up`; your final response is your report
+
 - read `contract.md`, `validation.md`, `validation-state.json`
 - start and stop your own server
 - test only the failed ids your dispatch lists, through the real surface, using it the way a real user would (agent-browser, rails console, curl, read-only reads)

@@ -67,7 +67,7 @@ the first line is exactly `THE LOOP HAS FINISHED 🎉`, or `THE LOOP HAS STOPPED
 if skipping step 2, follow [the diff handoff](references/diff.md)
 
 1. write the loop docs:
-   - `request.md`: an exact copy of the user's request, plus every later message that set scope before step 2, including answers to the check below. run `chmod a-w` on it at the end of step 1 and never edit it again
+   - `request.md`: an exact copy of the user's request, plus every later message that set scope before step 2, including answers to the check below. never edit it after step 1
    - `contract.md` with sections:
      - goals: specific and verifiable. write a target the request words as an aim ("try to", "ideally") as "reach <target>, or show the best result and the gap", with an assertion to match, so missing it is reported rather than a blocker
      - non-goals: what's out of scope
@@ -91,7 +91,7 @@ if skipping step 2, follow [the diff handoff](references/diff.md)
    - run `mkdir -p "playground/loops/<loop-name>"/{handoffs,evidence}`
    - size the docs to the change: a small loop may be a few-line contract with sections marked "n/a" and 1 assertion; a 500 loc loop earns the full template
    - check the contract against `request.md`. if it settles a choice the request leaves open and a wrong guess would be expensive to undo (product behaviour, scope, data, a 1-way door), ask the user about only those choices, each with a recommended answer, and wait; otherwise continue without asking. add the answers to `request.md` and the contract
-   - done when `<loop-check> docs` passes
+   - done when, after `chmod a-w playground/loops/<loop-name>/request.md`, `<loop-check> docs` passes
 2. complete the task against that contract per `<editing>`, with every contract goal as the items; the report goes to `handoffs/r0-worker.md`
    - done when you have verified the report, `<loop-check> editing` passes, every contract goal is implemented and every assertion is either marked passed from the worker's evidence (trivially cheap ones only) or left failed for the validator
 3. open a PR with the `/pr` skill
@@ -127,8 +127,8 @@ if skipping step 2, follow [the diff handoff](references/diff.md)
      - claude main session: in 1 message, start `bin/codex-native-review` as a background shell command and spawn the round's reviewers and validator without `run_in_background`, so they all report back together
      - claude sub-agent, such as a fallback PR owner or dependency worker: ending a turn ends your run. `Agent` spawns block until the child finishes, so spawn a round's reviewers and validator in 1 message to run them in parallel. a `SendMessage` resume and a background shell command, such as `bin/codex-native-review`, return at once, and their results reach you only with your next tool result. wait for those in foreground shell calls of at most 270s, which also keep your 5-minute prompt cache warm, until every result has landed. a call can return early on a file the job writes, e.g. `sh -c 'i=0; until [ -s <report> ] || [ $i -ge 18 ]; do sleep 15; i=$((i+1)); done'`
    - once `<loop-check> reports` passes, run `cp playground/loops/<loop-name>/{round-head,last-reviewed-head}`
-6. run `bin/ai-review-status --wait <pr-number>`, then `gh pr checks <pr-number> --watch > /dev/null; gh pr checks <pr-number>` so the check table prints once
-   - proceed to triage when `bin/ai-review-status` exits 0 and the checks have finished; check failures go to triage
+6. run `bin/ai-review-status --wait <pr-number>`, then `gh pr checks <pr-number> --watch > /dev/null`. if the wait exited 2, run both once more. then `gh pr checks <pr-number>` so the check table prints once
+   - proceed to triage when the checks have finished and `bin/ai-review-status` exited 0, or 2 on both waits; check failures go to triage. after 2 exits of 2, each provider the second output reports as `pending` or `missing` has timed out under the provider rule below, and output without `providers` is an infra failure per the next bullet
    - if you see signs of AI review quota exhaustion, auth, config, or infra failure, save it under `evidence/`, skip only the github AI review gate and proceed to triage, retain all existing review feedback
    - use the `/triaging-feedback` skill to triage from 2 sources: the `handoffs/` files and unresolved PR comments (run `bin/unresolved-pr-comments <pr-number>`). filter findings through the contract to prevent looping, disobeying the user and out-of-scope work: skip comments that go beyond the `contract.md` scope. factor in the price of a new loop round; sometimes good enough beats perfect
    - deduplicate skips by proposed change, append new sources to existing entries, and remove entries made obsolete by design changes
