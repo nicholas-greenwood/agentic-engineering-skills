@@ -1,6 +1,6 @@
 ---
 name: cross-harness-sub-agent
-description: spawn a cross harness sub-agent
+description: spawn a cross-harness sub-agent when the user asks, or from claude for computer/browser use once claude's own tools failed
 ---
 
 ## route
